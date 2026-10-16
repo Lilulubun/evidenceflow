@@ -10,6 +10,12 @@ python3 server.py
 
 Open `http://127.0.0.1:8000`. Health and runtime-safe setting status: `GET /health`.
 
+## Deploy controlled demo
+
+[Dokploy Application + Dockerfile setup](docs/DEPLOY_DOKPLOY.md) — one non-root container,
+persistent named volume, internal port 8000. External access gate required before
+publishing: demo roles and settings endpoints are not authentication.
+
 ## Validate
 
 ```sh

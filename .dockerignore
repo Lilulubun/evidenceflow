@@ -1,0 +1,26 @@
+# Allow only runtime inputs into build context; no local secrets or state.
+**
+!Dockerfile
+!.dockerignore
+!server.py
+!app_core.py
+!governance.py
+!ai_adapter.py
+!settings_store.py
+!query_layer.py
+!employee_graph.py
+!evidence.json
+!tkt3_results.json
+!static/
+!static/**
+# Never send secrets, even if misplaced under static/.
+**/.env
+**/.env.*
+!/.env.example
+**/runtime*.json
+**/*.pem
+**/*.key
+**/__pycache__/
+**/*.pyc
+**/*.log
+.git/
