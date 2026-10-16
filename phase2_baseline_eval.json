@@ -1,0 +1,88 @@
+{
+  "dataset_rows": 960,
+  "queries": [
+    {
+      "query_id": "emp004_manager_peer",
+      "query": "emp-004 weaknesses according to manager and peer",
+      "candidate_count": 18,
+      "precision_at_k": 1.0,
+      "recall_proxy": 18,
+      "abstains": false,
+      "sample": [
+        "ev-00040",
+        "ev-00041",
+        "ev-00042",
+        "ev-00043",
+        "ev-00044",
+        "ev-00045",
+        "ev-00046",
+        "ev-00047",
+        "ev-00048",
+        "ev-00520"
+      ]
+    },
+    {
+      "query_id": "declining_q3_q4",
+      "query": "employees with declining performance from Q3 to Q4 2026",
+      "candidate_count": 960,
+      "precision_at_k": 1.0,
+      "recall_proxy": 960,
+      "abstains": false,
+      "sample": [
+        "ev-00001",
+        "ev-00002",
+        "ev-00003",
+        "ev-00004",
+        "ev-00005",
+        "ev-00006",
+        "ev-00007",
+        "ev-00008",
+        "ev-00009",
+        "ev-00010"
+      ]
+    },
+    {
+      "query_id": "joko_collab",
+      "query": "Joko Handayani manager collaboration",
+      "candidate_count": 2,
+      "precision_at_k": 1.0,
+      "recall_proxy": 2,
+      "abstains": false,
+      "sample": [
+        "ev-00120",
+        "ev-00598"
+      ]
+    },
+    {
+      "query_id": "emp999",
+      "query": "emp-999 performance",
+      "candidate_count": 0,
+      "precision_at_k": null,
+      "recall_proxy": 0,
+      "abstains": true,
+      "sample": []
+    }
+  ],
+  "method": "structured entity/rater/competency filter; no semantic reranking",
+  "limitations": [
+    "Structured filter baseline is not a full relevance gold set for broad temporal query.",
+    "precision_at_k=1.0 means returned rows satisfy parsed constraints, not that every row answers natural-language intent.",
+    "Need labeled gold answers for true precision/recall and MRR."
+  ],
+  "next_experiment": {
+    "hybrid_pipeline": [
+      "parse structured constraints",
+      "filter evidence.json/custom DB",
+      "run Hindsight recall only within candidate entity scope",
+      "rerank by quote/competency/quarter/rater match",
+      "abstain when no structured candidates or score below threshold"
+    ],
+    "metrics": [
+      "precision@5",
+      "recall@5",
+      "MRR",
+      "abstention accuracy",
+      "entity leakage rate"
+    ]
+  }
+}

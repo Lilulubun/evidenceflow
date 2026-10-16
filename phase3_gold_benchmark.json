@@ -1,0 +1,150 @@
+{
+  "dataset_rows": 960,
+  "gold_queries": [
+    {
+      "id": "G01",
+      "query": "What weaknesses did manager and peer report for emp-004 in Q4-2026?",
+      "gold_size": 8,
+      "precision_at_5": 1.0,
+      "recall_at_5": 0.625,
+      "mrr": 1.0,
+      "abstain": false,
+      "gold_ids": [
+        "ev-00520",
+        "ev-00521",
+        "ev-00523",
+        "ev-00524",
+        "ev-00525",
+        "ev-00526",
+        "ev-00527",
+        "ev-00528"
+      ],
+      "returned_ids": [
+        "ev-00528",
+        "ev-00521",
+        "ev-00524",
+        "ev-00527",
+        "ev-00520"
+      ]
+    },
+    {
+      "id": "G02",
+      "query": "What did Joko Handayani manager say about collaboration?",
+      "gold_size": 2,
+      "precision_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "abstain": false,
+      "gold_ids": [
+        "ev-00120",
+        "ev-00598"
+      ],
+      "returned_ids": [
+        "ev-00120",
+        "ev-00598"
+      ]
+    },
+    {
+      "id": "G03",
+      "query": "Which emp-004 manager and peer delivery evidence was negative?",
+      "gold_size": 1,
+      "precision_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "abstain": false,
+      "gold_ids": [
+        "ev-00523"
+      ],
+      "returned_ids": [
+        "ev-00523"
+      ]
+    },
+    {
+      "id": "G04",
+      "query": "Show all evidence for nonexistent emp-999.",
+      "gold_size": 0,
+      "precision_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "mrr": 0,
+      "abstain": true,
+      "gold_ids": [],
+      "returned_ids": []
+    },
+    {
+      "id": "G05",
+      "query": "What changed for emp-004 from Q3 to Q4?",
+      "gold_size": 24,
+      "precision_at_5": 1.0,
+      "recall_at_5": 0.20833333333333334,
+      "mrr": 1.0,
+      "abstain": false,
+      "gold_ids": [
+        "ev-00037",
+        "ev-00038",
+        "ev-00039",
+        "ev-00040",
+        "ev-00041",
+        "ev-00042",
+        "ev-00043",
+        "ev-00044",
+        "ev-00045",
+        "ev-00046",
+        "ev-00047",
+        "ev-00048",
+        "ev-00517",
+        "ev-00518",
+        "ev-00519",
+        "ev-00520",
+        "ev-00521",
+        "ev-00522",
+        "ev-00523",
+        "ev-00524",
+        "ev-00525",
+        "ev-00526",
+        "ev-00527",
+        "ev-00528"
+      ],
+      "returned_ids": [
+        "ev-00517",
+        "ev-00528",
+        "ev-00521",
+        "ev-00524",
+        "ev-00527"
+      ]
+    },
+    {
+      "id": "G06",
+      "query": "Which manager assessments were negative for collaboration in Q4-2026?",
+      "gold_size": 7,
+      "precision_at_5": 1.0,
+      "recall_at_5": 0.7142857142857143,
+      "mrr": 1.0,
+      "abstain": false,
+      "gold_ids": [
+        "ev-00525",
+        "ev-00526",
+        "ev-00585",
+        "ev-00645",
+        "ev-00648",
+        "ev-00814",
+        "ev-00960"
+      ],
+      "returned_ids": [
+        "ev-00645",
+        "ev-00814",
+        "ev-00585",
+        "ev-00526",
+        "ev-00648"
+      ]
+    }
+  ],
+  "summary": {
+    "queries": 6,
+    "macro_precision_at_5": 1.0,
+    "macro_recall_at_5": 0.7579365079365079,
+    "macro_mrr": 0.8333333333333334,
+    "abstention_accuracy": 1.0,
+    "entity_leakage_rate": 0
+  },
+  "label_rule": "explicit structured constraints; negative sentiment only when query asks weakness/negative"
+}

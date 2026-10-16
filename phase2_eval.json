@@ -1,0 +1,87 @@
+[
+  {
+    "name": "traceability",
+    "query": "What evidence supports emp-004 weaknesses according to peer and manager assessments?",
+    "count": 67,
+    "results": [
+      "emp-008 didn't respond to junior questions on data pipeline (peer, 2026-11-30) and cancelled two scheduled auth migration mentoring sessions (manager, 2026-11-19) | When: November 19 and November 30, 2026 | Involving: emp-008 (user); sources: peer assessment, manager assessment | Mentoring concerns in Q4-2026 review",
+      "emp-006 handled the migration cleanly, noted positively for delivery_quality in both self and peer Q4-2026 assessments | When: Self assessment event 2026-12-27; peer assessment event 2026-12-04 | Involving: emp-006 | Consistent positive delivery_quality signal from two assessment sources",
+      "emp-027 flagged for adaptability weakness: blocked CI pipeline migration (manager assessment, Nov 28) and auth migration (self assessment, Dec 6), both citing old habits | When: November 28 - December 6, 2026 | Involving: emp-027 (employee under 360 review) | Recurring adaptability concern raised in both self and manager assessments",
+      "emp-018 peer assessment (adaptability, positive): context-switched to auth migration mid-quarter without complaint | When: 2026-12-28 | Involving: emp-018 (peer assessment) | Q4-2026 performance evidence",
+      "Peer and manager assessments (adaptability, neg): emp-021 refused to switch to the new k8s rollout process for a month (reported independently by both peer and manager). | When: Reported 2026-10-21 (manager) and 2026-11-06 (peer) | Involving: emp-021 (user), peers, manager | Repeated negative adaptability evidence from two sources in Q4-2026 review",
+      "emp-018 peer assessment (reliability, positive): never missed a standup and always had status ready | When: 2026-11-01 | Involving: emp-018 (peer assessment) | Q4-2026 performance evidence",
+      "emp-022 learned the new auth migration tooling quickly and context-switched to vendor integration mid-quarter without complaint (peer assessment, adaptability, positive). | When: December 24-26, 2026 | Involving: emp-022 (peer assessment) | Q4-2026 360-degree performance evidence",
+      "Peer assessment (reliability, neg): emp-021 missed three standups in a row during the data pipeline work. | When: 2026-11-13 | Involving: emp-021 (user), peers | Negative reliability evidence",
+      "emp-018 peer assessment (initiative, negative): never picked up the stale CI pipeline ticket | When: 2026-12-31 | Involving: emp-018 (peer assessment) | Q4-2026 performance evidence",
+      "emp-015 peer assessment (problem_solving, negative): misdiagnosed onboarding flow and cost the team a day; patched it with a workaround instead of fixing the root cause | When: December 19-20, 2026 | Involving: emp-015 (peer assessment) | Contradicts self-claimed onboarding flow refactor; both peer negatives target onboarding flow"
+    ]
+  },
+  {
+    "name": "temporal",
+    "query": "Which employees show declining performance from Q3 to Q4 2026?",
+    "count": 54,
+    "results": [
+      "emp-039 manager-assessed negatives: didn't respond to junior questions on payment-gateway (mentoring, 2026-11-11), declined to present reporting service findings (initiative, 2026-11-25) | When: 2026-11-11 to 2026-11-25 | Involving: emp-039 | Mentoring and initiative gaps flagged by manager in Q4-2026 review",
+      "emp-012 showed adaptability in Q4-2026: picked up the reporting service in two weeks when the team lost a member (2026-10-07), learned the new search indexer tooling quickly (2026-10-18), and picked up the mobile app in two weeks after another member loss (2026-12-08). | When: Q4-2026, events between 2026-10-07 and 2026-12-08 | Involving: emp-012 (employee); noted in self, manager, and peer assessments | Positive adaptability evidence for performance review",
+      "emp-019 Q4-2026 peer assessment (reliability, negative): missed three standups in a row during CI pipeline work and again during data pipeline work | When: December 12 and December 26, 2026 | Involving: emp-019 | 360-degree performance evidence",
+      "emp-023 peer assessment positives Q4-2026: isolated the memory leak in reporting service (Oct 24, 2026); recurring routine of spending Fridays helping juniors debug billing reconciliation (noted Nov 2, 2026). | When: October 24 and November 2, 2026; Friday mentoring recurring | Involving: emp-023 (employee under review), juniors (colleagues) | 360-degree performance evidence, Q4-2026",
+      "emp-023 Q4-2026 self assessment flagged collaboration/mentoring/adaptability issues: dismissed feedback on customer dashboard in front of juniors (Oct 10, 2026), refused to switch to new mobile app process for a month (Dec 3, 2026), left reporting service code reviews with no comments (Dec 18, 2026). | When: October 10 - December 18, 2026 | Involving: emp-023 (employee under review) | 360-degree performance evidence, Q4-2026",
+      "emp-023 peer assessment negatives Q4-2026: waited for explicit assignment on customer dashboard despite capacity (Oct 11, 2026), patched mobile app with workaround instead of fixing root cause (Oct 16, 2026), kept guessing on customer dashboard instead of reading logs (Dec 24, 2026). | When: October 11 - December 24, 2026 | Involving: emp-023 (employee under review) | 360-degree performance evidence, Q4-2026",
+      "Manager assessment (positive): emp-036 handled the migration cleanly | When: October 15, 2026 | Involving: emp-036 (user), manager | Q4-2026 performance evidence",
+      "emp-024 learned new reporting service tooling and vendor integration tooling quickly | When: reporting tooling October 17, 2026; vendor integration tooling December 7, 2026 | Involving: emp-024 (employee, self + manager assessment) | Q4-2026 performance evidence, adaptability positive",
+      "emp-019 Q4-2026 self assessment (reliability, negative): on-call for onboarding flow required two escalations | When: October 7, 2026 | Involving: emp-019 | 360-degree performance evidence",
+      "emp-008 refused to switch to the new search indexer process for a month (until 2026-12-20) and refused the new mobile app process for a month (2026-11-16); manager also flagged slow learning of data pipeline tooling (2026-10-10) | When: October 10 - December 20, 2026 | Involving: emp-008 (user, reviewed employee); sources: self assessment, manager assessment | Adaptability concerns in Q4-2026 360-degree performance review"
+    ]
+  },
+  {
+    "name": "divergence",
+    "query": "What disagreements exist between self, peer, and manager ratings for emp-004?",
+    "count": 67,
+    "results": [
+      "emp-020 never missed a standup and always had status ready (reported in both self and manager assessments, reliability pos) | When: Self assessment event 2026-12-06; manager assessment event 2026-10-29 | Involving: emp-020 | Q4-2026 performance evidence",
+      "emp-008 didn't respond to junior questions on data pipeline (peer, 2026-11-30) and cancelled two scheduled auth migration mentoring sessions (manager, 2026-11-19) | When: November 19 and November 30, 2026 | Involving: emp-008 (user); sources: peer assessment, manager assessment | Mentoring concerns in Q4-2026 review",
+      "Peer assessment (reliability, neg): emp-021 missed three standups in a row during the data pipeline work. | When: 2026-11-13 | Involving: emp-021 (user), peers | Negative reliability evidence",
+      "emp-015 peer assessment (problem_solving, negative): misdiagnosed onboarding flow and cost the team a day; patched it with a workaround instead of fixing the root cause | When: December 19-20, 2026 | Involving: emp-015 (peer assessment) | Contradicts self-claimed onboarding flow refactor; both peer negatives target onboarding flow",
+      "emp-022 shared a reusable template for mobile app (self assessment) and a reusable template for search indexer (manager assessment) — collaboration, positive. | When: November 29 and December 5, 2026 | Involving: emp-022 (self and manager assessment) | Q4-2026 360-degree performance evidence",
+      "emp-008 handled the migration cleanly, cited positively in both self and peer assessments | When: self assessment 2026-11-06; peer assessment 2026-11-26 | Involving: emp-008 (user); sources: self assessment, peer assessment | Delivery quality strength in Q4-2026 review",
+      "Peer and manager assessments (adaptability, neg): emp-021 refused to switch to the new k8s rollout process for a month (reported independently by both peer and manager). | When: Reported 2026-10-21 (manager) and 2026-11-06 (peer) | Involving: emp-021 (user), peers, manager | Repeated negative adaptability evidence from two sources in Q4-2026 review",
+      "emp-013's on-call shifts required two escalations each: search indexer (2026-12-19) and mobile app (2026-12-07) (peer-assessed reliability, negative) | When: 2026-12-07 and 2026-12-19 | Involving: emp-013 (employee under review), peers (assessors) | Q4-2026 360-degree performance evidence",
+      "emp-011 missed three standups in a row during the auth migration (peer-assessed reliability, negative, Q4-2026 review). | When: 2026-10-04 | Involving: emp-011, peer reviewers | Performance evidence for Q4-2026 review",
+      "emp-008 never missed a standup and always had status ready (peer assessment) | When: November 21, 2026 | Involving: emp-008 (user); source: peer assessment | Reliability strength in Q4-2026 review"
+    ]
+  },
+  {
+    "name": "role",
+    "query": "What did the manager say about Joko Handayani collaboration?",
+    "count": 69,
+    "results": [
+      "Recall menghasilkan evidence nyata untuk Joko Handayani (emp-010): dua evidence collaboration negatif dari peran self/manager — re-implemented auth migration alone instead of pairing, dan went silent in data pipeline review thread for a week. Role evidence tersimpan: self, manager, peer. Retrieval juga menemukan proof positif delivery quality milik Joko. Hindsight tidak menggabungkan semua signal jadi satu rating. | When: October 15, 2026 | Involving: Joko Handayani (emp-010, subject of evidence), Hermes Agent | Bukti inti bahwa recall evidence per-role berfungsi dan rating tidak digabung",
+      "Joko Handayani went silent in data pipeline review thread for a week | When: 2026-09-04 | Involving: Joko Handayani (emp-010, infra team) | Manager-assessed collaboration negative",
+      "Joko Handayani (emp-010, infra team) shows mixed collaboration: went silent in data pipeline review thread for a week (2026-09-04 to 2026-09-10, manager-assessed negative), but unblocked three other people on mobile app (2026-11-16, manager-assessed positive).",
+      "Joko Handayani misdiagnosed search indexer issue costing team a day | When: 2026-08-23 | Involving: Joko Handayani (emp-010, infra team) | Manager-assessed problem solving negative",
+      "Joko Handayani carried on-call for onboarding flow without escalation | When: 2026-09-16 | Involving: Joko Handayani (emp-010, infra team) | Self-assessed reliability positive",
+      "Joko Handayani re-implemented auth migration alone instead of pairing | When: 2026-09-08 | Involving: Joko Handayani (emp-010, infra team) | Self-assessed collaboration negative",
+      "Joko Handayani declined to present mobile app findings | When: 2026-08-07 | Involving: Joko Handayani (emp-010, infra team) | Manager-assessed initiative negative",
+      "Joko Handayani (emp-010, infra team) shows mixed adaptability: learned the new onboarding flow tooling quickly (2026-10-07, manager-assessed positive), but blocked vendor integration migration citing old habits (2026-11-10, self-assessed negative).",
+      "Joko Handayani mobile app code needed almost no review comments | When: 2026-09-02 | Involving: Joko Handayani (emp-010, infra team) | Peer-assessed delivery quality positive",
+      "Dewi Nugraha payment-gateway code needed almost no review comments per manager assessment | When: 2026-09-09 | Involving: Dewi Nugraha (emp-004, mobile team) | Manager assessment positive delivery_quality feedback for Q3-2026"
+    ]
+  },
+  {
+    "name": "abstention",
+    "query": "What is emp-999 performance in Q4 2026?",
+    "count": 67,
+    "results": [
+      "emp-023 peer assessment negatives Q4-2026: waited for explicit assignment on customer dashboard despite capacity (Oct 11, 2026), patched mobile app with workaround instead of fixing root cause (Oct 16, 2026), kept guessing on customer dashboard instead of reading logs (Dec 24, 2026). | When: October 11 - December 24, 2026 | Involving: emp-023 (employee under review) | 360-degree performance evidence, Q4-2026",
+      "emp-011 picked up the data pipeline in two weeks when the team lost a member (peer-assessed adaptability, positive, Q4-2026 review). | When: 2026-12-23 | Involving: emp-011, peer reviewers | Performance evidence for Q4-2026 review",
+      "emp-008 refused to switch to the new search indexer process for a month (until 2026-12-20) and refused the new mobile app process for a month (2026-11-16); manager also flagged slow learning of data pipeline tooling (2026-10-10) | When: October 10 - December 20, 2026 | Involving: emp-008 (user, reviewed employee); sources: self assessment, manager assessment | Adaptability concerns in Q4-2026 360-degree performance review",
+      "emp-038 shipped data pipeline ahead of deadline with zero regressions; self-assessed twice (2026-11-04 and 2026-12-05) | When: November 4 and December 5, 2026 | Involving: emp-038 (employee under review) | Q4-2026 self-assessment evidence",
+      "emp-011 shared a reusable template for vendor integration (peer-assessed collaboration, positive, Q4-2026 review). | When: 2026-10-19 | Involving: emp-011, peer reviewers | Performance evidence for Q4-2026 review",
+      "emp-011 refactored the CI pipeline to remove the N+1 queries (peer-assessed problem solving, positive, Q4-2026 review). | When: 2026-10-28 | Involving: emp-011, peer reviewers | Performance evidence for Q4-2026 review",
+      "emp-019 Q4-2026 peer assessment (reliability, negative): missed three standups in a row during CI pipeline work and again during data pipeline work | When: December 12 and December 26, 2026 | Involving: emp-019 | 360-degree performance evidence",
+      "emp-011 shared a reusable template for the mobile app (manager-assessed collaboration, positive, Q4-2026 review). | When: 2026-12-06 | Involving: emp-011, manager | Performance evidence for Q4-2026 review",
+      "emp-012 showed adaptability in Q4-2026: picked up the reporting service in two weeks when the team lost a member (2026-10-07), learned the new search indexer tooling quickly (2026-10-18), and picked up the mobile app in two weeks after another member loss (2026-12-08). | When: Q4-2026, events between 2026-10-07 and 2026-12-08 | Involving: emp-012 (employee); noted in self, manager, and peer assessments | Positive adaptability evidence for performance review",
+      "emp-023 Q4-2026 self assessment flagged collaboration/mentoring/adaptability issues: dismissed feedback on customer dashboard in front of juniors (Oct 10, 2026), refused to switch to new mobile app process for a month (Dec 3, 2026), left reporting service code reviews with no comments (Dec 18, 2026). | When: October 10 - December 18, 2026 | Involving: emp-023 (employee under review) | 360-degree performance evidence, Q4-2026"
+    ]
+  }
+]

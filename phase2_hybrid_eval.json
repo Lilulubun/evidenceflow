@@ -1,0 +1,82 @@
+{
+  "method": "candidate-scoped retrieval probe",
+  "cases": [
+    {
+      "case": "emp004",
+      "query": "emp-004 manager peer weaknesses",
+      "raw_count": 68,
+      "entity_hits": 2,
+      "entity_precision_all": 0.029411764705882353,
+      "entity_recall_hits": [
+        "Q4-2026 360 review (manager assessment, problem_solving, negative): emp-004 misdiagnosed vendor integration and cost the team a day. | When: December 6, 2026 | Involving: emp-004 (employee under review); source: manager assessment | Performance evidence for emp-004 Q4-2026 review",
+        "Catatan: query emp-004 masih menghasilkan noise karena recall budget tinggi dan 32 dokumen belum selesai. 27 pending diproses worker; 2 failed perlu retry setelah model stabil. | When: October 15, 2026 | Involving: Hermes Agent | Known issue dan rencana retry yang perlu diikuti"
+      ],
+      "top5": [
+        "emp-008 never missed a standup and always had status ready (peer assessment) | When: November 21, 2026 | Involving: emp-008 (user); source: peer assessment | Reliability strength in Q4-2026 review",
+        "emp-018 peer assessment (adaptability, positive): context-switched to auth migration mid-quarter without complaint | When: 2026-12-28 | Involving: emp-018 (peer assessment) | Q4-2026 performance evidence",
+        "Manager assessment (positive): emp-036 isolated the memory leak in the reporting service | When: December 11, 2026 | Involving: emp-036 (user), manager | Q4-2026 performance evidence",
+        "Peer assessment (reliability, neg): emp-021 missed three standups in a row during the data pipeline work. | When: 2026-11-13 | Involving: emp-021 (user), peers | Negative reliability evidence",
+        "Peer and manager assessments (adaptability, neg): emp-021 refused to switch to the new k8s rollout process for a month (reported independently by both peer and manager). | When: Reported 2026-10-21 (manager) and 2026-11-06 (peer) | Involving: emp-021 (user), peers, manager | Repeated negative adaptability evidence from two sources in Q4-2026 review"
+      ],
+      "entity_leakage_rate": 0.9705882352941176
+    },
+    {
+      "case": "joko",
+      "query": "Joko Handayani emp-010 manager collaboration",
+      "raw_count": 67,
+      "entity_hits": 24,
+      "entity_precision_all": 0.3582089552238806,
+      "entity_recall_hits": [
+        "emp-010 unblocked three other people on mobile app (manager assessment, collaboration, positive) | When: November 16, 2026 | Involving: emp-010 (employee under review), three other people",
+        "Recall menghasilkan evidence nyata untuk Joko Handayani (emp-010): dua evidence collaboration negatif dari peran self/manager — re-implemented auth migration alone instead of pairing, dan went silent in data pipeline review thread for a week. Role evidence tersimpan: self, manager, peer. Retrieval juga menemukan proof positif delivery quality milik Joko. Hindsight tidak menggabungkan semua signal jadi satu rating. | When: October 15, 2026 | Involving: Joko Handayani (emp-010, subject of evidence), Hermes Agent | Bukti inti bahwa recall evidence per-role berfungsi dan rating tidak digabung",
+        "Joko Handayani went silent in data pipeline review thread for a week | When: 2026-09-04 | Involving: Joko Handayani (emp-010, infra team) | Manager-assessed collaboration negative",
+        "Joko Handayani re-implemented auth migration alone instead of pairing | When: 2026-09-08 | Involving: Joko Handayani (emp-010, infra team) | Self-assessed collaboration negative",
+        "Joko Handayani carried on-call for onboarding flow without escalation | When: 2026-09-16 | Involving: Joko Handayani (emp-010, infra team) | Self-assessed reliability positive"
+      ],
+      "top5": [
+        "emp-022 shared a reusable template for mobile app (self assessment) and a reusable template for search indexer (manager assessment) — collaboration, positive. | When: November 29 and December 5, 2026 | Involving: emp-022 (self and manager assessment) | Q4-2026 360-degree performance evidence",
+        "emp-010 unblocked three other people on mobile app (manager assessment, collaboration, positive) | When: November 16, 2026 | Involving: emp-010 (employee under review), three other people",
+        "Recall menghasilkan evidence nyata untuk Joko Handayani (emp-010): dua evidence collaboration negatif dari peran self/manager — re-implemented auth migration alone instead of pairing, dan went silent in data pipeline review thread for a week. Role evidence tersimpan: self, manager, peer. Retrieval juga menemukan proof positif delivery quality milik Joko. Hindsight tidak menggabungkan semua signal jadi satu rating. | When: October 15, 2026 | Involving: Joko Handayani (emp-010, subject of evidence), Hermes Agent | Bukti inti bahwa recall evidence per-role berfungsi dan rating tidak digabung",
+        "emp-039 self-assessment (collaboration, negative): re-implemented data pipeline alone instead of pairing | When: 2026-11-24 (event date) | Involving: emp-039 | Negative collaboration signal in Q4-2026 performance review",
+        "Joko Handayani went silent in data pipeline review thread for a week | When: 2026-09-04 | Involving: Joko Handayani (emp-010, infra team) | Manager-assessed collaboration negative"
+      ],
+      "entity_leakage_rate": 0.6417910447761195
+    },
+    {
+      "case": "unknown",
+      "query": "emp-999 performance",
+      "raw_count": 75,
+      "entity_hits": 0,
+      "entity_precision_all": 0.0,
+      "entity_recall_hits": [],
+      "top5": [
+        "emp-022 refactored the CI pipeline to remove the N+1 queries (peer assessment, problem_solving, positive). | When: October 28, 2026 | Involving: emp-022 (peer assessment) | Q4-2026 360-degree performance evidence",
+        "emp-011 refactored the customer dashboard to remove the N+1 queries (peer-assessed problem solving, positive, Q4-2026 review). | When: 2026-11-05 | Involving: emp-011, peer reviewers | Performance evidence for Q4-2026 review",
+        "emp-018 manager assessment (mentoring, positive): spent Fridays helping juniors debug search indexer | When: Fridays, as of 2026-11-01 | Involving: emp-018 (manager assessment) | Q4-2026 performance evidence",
+        "emp-018 peer assessment (initiative, negative): never picked up the stale CI pipeline ticket | When: 2026-12-31 | Involving: emp-018 (peer assessment) | Q4-2026 performance evidence",
+        "emp-022 learned the new reporting service tooling quickly (self assessment, adaptability, positive). | When: October 10, 2026 | Involving: emp-022 (self assessment) | Q4-2026 360-degree performance evidence"
+      ],
+      "entity_leakage_rate": 1.0
+    },
+    {
+      "case": "emp004_structured",
+      "candidate_count": 24,
+      "abstains": false
+    },
+    {
+      "case": "joko_structured",
+      "candidate_count": 24,
+      "abstains": false
+    },
+    {
+      "case": "unknown_structured",
+      "candidate_count": 0,
+      "abstains": true
+    }
+  ],
+  "limitations": [
+    "Hindsight API recall has no documented entity filter in this probe.",
+    "Entity hit is a leakage metric, not semantic relevance.",
+    "True precision/recall needs manually labeled answer sets."
+  ]
+}

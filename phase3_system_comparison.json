@@ -1,0 +1,139 @@
+{
+  "dataset_rows": 960,
+  "rows": [
+    {
+      "id": "G01",
+      "gold_size": 8,
+      "structured": {
+        "p@5": 1.0,
+        "r@5": 0.625,
+        "mrr": 1.0,
+        "abstain": false
+      },
+      "hindsight_only": {
+        "raw_results": 68,
+        "abstain": false,
+        "entity_leakage": "high/observed"
+      },
+      "hybrid": {
+        "p@5": 1.0,
+        "r@5": 0.625,
+        "mrr": 1.0,
+        "abstain": false,
+        "entity_leakage": 0
+      }
+    },
+    {
+      "id": "G02",
+      "gold_size": 2,
+      "structured": {
+        "p@5": 1.0,
+        "r@5": 1.0,
+        "mrr": 1.0,
+        "abstain": false
+      },
+      "hindsight_only": {
+        "raw_results": 67,
+        "abstain": false,
+        "entity_leakage": "high/observed"
+      },
+      "hybrid": {
+        "p@5": 1.0,
+        "r@5": 1.0,
+        "mrr": 1.0,
+        "abstain": false,
+        "entity_leakage": 0
+      }
+    },
+    {
+      "id": "G03",
+      "gold_size": 1,
+      "structured": {
+        "p@5": 1.0,
+        "r@5": 1.0,
+        "mrr": 1.0,
+        "abstain": false
+      },
+      "hindsight_only": {
+        "raw_results": 68,
+        "abstain": false,
+        "entity_leakage": "high/observed"
+      },
+      "hybrid": {
+        "p@5": 1.0,
+        "r@5": 1.0,
+        "mrr": 1.0,
+        "abstain": false,
+        "entity_leakage": 0
+      }
+    },
+    {
+      "id": "G04",
+      "gold_size": 0,
+      "structured": {
+        "p@5": 1.0,
+        "r@5": 1.0,
+        "mrr": 0,
+        "abstain": true
+      },
+      "hindsight_only": {
+        "raw_results": 75,
+        "abstain": false,
+        "entity_leakage": "high/observed"
+      },
+      "hybrid": {
+        "p@5": 1.0,
+        "r@5": 1.0,
+        "mrr": 0,
+        "abstain": true,
+        "entity_leakage": 0
+      }
+    },
+    {
+      "id": "G05",
+      "gold_size": 24,
+      "structured": {
+        "p@5": 1.0,
+        "r@5": 0.20833333333333334,
+        "mrr": 1.0,
+        "abstain": false
+      },
+      "hindsight_only": {
+        "raw_results": 74,
+        "abstain": false,
+        "entity_leakage": "high/observed"
+      },
+      "hybrid": {
+        "p@5": 1.0,
+        "r@5": 0.20833333333333334,
+        "mrr": 1.0,
+        "abstain": false,
+        "entity_leakage": 0
+      }
+    },
+    {
+      "id": "G06",
+      "gold_size": 7,
+      "structured": {
+        "p@5": 1.0,
+        "r@5": 0.7142857142857143,
+        "mrr": 1.0,
+        "abstain": false
+      },
+      "hindsight_only": {
+        "raw_results": 67,
+        "abstain": false,
+        "entity_leakage": "high/observed"
+      },
+      "hybrid": {
+        "p@5": 1.0,
+        "r@5": 0.7142857142857143,
+        "mrr": 1.0,
+        "abstain": false,
+        "entity_leakage": 0
+      }
+    }
+  ],
+  "conclusion": "Hindsight-only provides semantic candidates but violates entity boundaries; structured constraints provide audit-safe candidate set; hybrid preserves boundary and can use semantic ranking inside scope.",
+  "metrics_note": "Hindsight-only rows use observed Phase 2 retrieval counts; no exact relevance labels available for those outputs."
+}

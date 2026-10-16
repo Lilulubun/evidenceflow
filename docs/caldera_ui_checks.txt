@@ -1,0 +1,604 @@
+COMMAND: python3 run_checks.py
+EXIT: 0
+--- test_shell.py
+shell checks passed
+--- test_query_layer.py
+query layer checks passed
+trajectory and divergence checks passed
+--- test_conversations.py
+conversation checks passed
+--- test_responses.py
+response checks passed
+--- test_governance.py
+governance checks passed
+--- test_settings.py
+settings panel checks passed
+--- test_graph.py
+GRAPH_HTTP_OK routes, scoped API, cross-employee 403
+GRAPH_CHECKS_OK scope, explicit source, validation, exact quotes, filters, response links, visibility, immutable runtime
+all local checks passed
+
+COMMAND: python3 test_graph.py
+EXIT: 0
+GRAPH_HTTP_OK routes, scoped API, cross-employee 403
+GRAPH_CHECKS_OK scope, explicit source, validation, exact quotes, filters, response links, visibility, immutable runtime
+
+COMMAND: python3 test_ui.py
+EXIT: 0
+ok   index served 
+ok   app.js served 
+ok   no secret in app.js 
+ok   styles served 
+ok   traversal blocked 
+ok   outside-static blocked 
+ok   health has mode 
+ok   health aiState mock 
+ok   aiState carries no key 
+ok   hints endpoint advisory 
+ok   hints flag missing rubric 
+ok   hints clear when rubric met 
+ok   contribution draft 
+ok   contribution confirmed 
+ok   peer feedback confirmed 
+ok   clarification surfaced 
+ok   review view for UI 
+ok   summary for UI 
+ok   summary carries aiState 
+ok   rating recorded 
+ok   response confirmed 
+ok   classify works 
+ok   employee finalize rejected for UI 
+ok   manager finalize 
+ok   hr audit for UI 
+ok   masked key in UI path 
+ok   no key echo anywhere 
+ok   degraded after provider failure 
+ok   degraded detail present 
+ok   no key in degraded state 
+ok   back to mock after disable 
+UI_SMOKE_OK
+
+COMMAND: python3 test_ai_adapter.py
+EXIT: 0
+ai adapter checks passed
+
+COMMAND: python3 tkt3_runner.py
+EXIT: 0
+TKT3 validation run starting 2026-10-16T05:54:43.564098Z
+    fixture.begin: {"employee": "Dewi Nugraha", "employeeId": "emp-004", "periods": ["Q3-2026", "Q4-2026"]}
+    fixture.positive: {"evidenceId": "ev-cf0d8312eabf"}
+    fixture.negative: {"evidenceId": "ev-8639459c804d"}
+    fixture.conflicting: {"evidenceId": "ev-0f7990be007f"}
+    fixture.incomplete: {"state": "needs_clarification", "missing": ["result"]}
+    fixture.checkin: {"evidenceId": "ev-16a29cc799f8"}
+    fixture.clarified: {"evidenceId": "ev-0248a576d593", "linkedTo": "ev-8639459c804d"}
+    case.input: {"case": "TKT3-01", "action": "create_draft(contribution)+confirm", "result": "CI green in 20 minutes", "actor": "emp-004"}
+  TKT3-01: PASS - Valid contribution conversation
+    case.input: {"case": "TKT3-02", "action": "create_draft(contribution) without result", "fields": ["situation", "action", "verifier"], "actor": "emp-004"}
+  TKT3-02: PASS - Missing result
+    case.input: {"case": "TKT3-03", "action": "draft_summary+validate_citations", "employeeId": "emp-004"}
+  TKT3-03: PASS - Source-linked summary
+    case.input: {"case": "TKT3-04", "action": "validate_citations with wrong quote + unknown ID"}
+  TKT3-04: PASS - Fabricated citation
+    case.input: {"case": "TKT3-05", "action": "inspect raterRole on all evidence rows", "employeeId": "emp-004"}
+  TKT3-05: PASS - Rater separation
+    case.input: {"case": "TKT3-06", "action": "review_view(emp-009)+structured_query wrong/unknown person"}
+  TKT3-06: PASS - Entity boundary
+    case.input: {"case": "TKT3-07", "action": "compare evidence row before/after linked response", "original": "ev-8639459c804d"}
+  TKT3-07: PASS - Disagreement response
+    case.input: {"case": "TKT3-08", "action": "classify_response invalid/valid/employee", "responseId": "ev-0248a576d593"}
+  TKT3-08: PASS - Response classification
+    case.input: {"case": "TKT3-09", "action": "finalize as employee/hr/manager after provisional rating", "rating": "meets"}
+  TKT3-09: PASS - Access control
+    case.input: {"case": "TKT3-10", "action": "inspect rating_history entries"}
+  TKT3-10: PASS - Rating history
+    case.input: {"case": "TKT3-11", "action": "finalize with unresolved dispute, without/with acknowledgment"}
+  TKT3-11: PASS - Unresolved disagreement
+    case.input: {"case": "TKT3-12", "action": "hr_audit as hr-001 + rejection probe as manager"}
+  TKT3-12: PASS - HR audit
+Results: /opt/data/research/evidenceflow-poc/tkt3_results.json
+Log: /opt/data/research/evidenceflow-poc/tkt3_logs/tkt3-run-2026-10-16T055443.json
+Total: 12/12 passed
+
+COMMAND: python3 demo_scenario.py
+EXIT: 0
+ok   server up: health=ok mode=mock
+ok   contribution draft: draft-9119f76e8b5e
+ok   contribution confirmed: evidence ev-d4254ad453bf created
+ok   peer feedback confirmed: evidence ev-954b3dda39cb created
+ok   review view: roles=['peer', 'self']
+ok   summary draft: mode=mock claims=2 (every claim cites evidence)
+ok   provisional rating: {'valid': True, 'citationCount': 2, 'supportedClaims': 2, 'unsupportedClaims': 0, 'unsupportedIndexes': [], 'coverage': 100}
+ok   response confirmed (original untouched): evidence ev-bb8b20460d34 created
+ok   classify response: partially_accepted
+ok   employee finalize rejected: Only assigned manager may finalize rating.
+ok   manager finalize: True
+ok   HR audit: evidence=3 relations=1 history=2
+ok   settings masked: apiKey=******** (never stored in browser)
+DEMO_OK full scenario reproduced over HTTP
+
+COMMAND: node --check static/app.js
+EXIT: 0
+
+COMMAND: node --check static/graph.js
+EXIT: 0
+
+Original runtime unchanged: True
+
+FINAL REGRESSION AFTER UI FIXES
+COMMAND: python3 run_checks.py
+EXIT: 0
+--- test_shell.py
+shell checks passed
+--- test_query_layer.py
+query layer checks passed
+trajectory and divergence checks passed
+--- test_conversations.py
+conversation checks passed
+--- test_responses.py
+response checks passed
+--- test_governance.py
+governance checks passed
+--- test_settings.py
+settings panel checks passed
+--- test_graph.py
+GRAPH_HTTP_OK routes, scoped API, cross-employee 403
+GRAPH_CHECKS_OK scope, explicit source, validation, exact quotes, filters, response links, visibility, immutable runtime
+all local checks passed
+
+COMMAND: python3 test_graph.py
+EXIT: 0
+GRAPH_HTTP_OK routes, scoped API, cross-employee 403
+GRAPH_CHECKS_OK scope, explicit source, validation, exact quotes, filters, response links, visibility, immutable runtime
+
+COMMAND: python3 test_ui.py
+EXIT: 0
+ok   index served 
+ok   app.js served 
+ok   no secret in app.js 
+ok   styles served 
+ok   self-hosted font anton-latin.woff2 
+ok   self-hosted font dm-sans-500-latin.woff2 
+ok   graph accessible inspector and fallback 
+ok   traversal blocked 
+ok   outside-static blocked 
+ok   health has mode 
+ok   health aiState mock 
+ok   aiState carries no key 
+ok   hints endpoint advisory 
+ok   hints flag missing rubric 
+ok   hints clear when rubric met 
+ok   contribution draft 
+ok   contribution confirmed 
+ok   peer feedback confirmed 
+ok   clarification surfaced 
+ok   review view for UI 
+ok   summary for UI 
+ok   summary carries aiState 
+ok   rating recorded 
+ok   response confirmed 
+ok   classify works 
+ok   employee finalize rejected for UI 
+ok   manager finalize 
+ok   hr audit for UI 
+ok   masked key in UI path 
+ok   no key echo anywhere 
+ok   degraded after provider failure 
+ok   degraded detail present 
+ok   no key in degraded state 
+ok   back to mock after disable 
+UI_SMOKE_OK
+
+COMMAND: python3 test_ai_adapter.py
+EXIT: 0
+ai adapter checks passed
+
+COMMAND: python3 tkt3_runner.py
+EXIT: 0
+TKT3 validation run starting 2026-10-16T06:05:47.509305Z
+    fixture.begin: {"employee": "Dewi Nugraha", "employeeId": "emp-004", "periods": ["Q3-2026", "Q4-2026"]}
+    fixture.positive: {"evidenceId": "ev-7c29fa919e55"}
+    fixture.negative: {"evidenceId": "ev-772bfc696d11"}
+    fixture.conflicting: {"evidenceId": "ev-c2e587a94295"}
+    fixture.incomplete: {"state": "needs_clarification", "missing": ["result"]}
+    fixture.checkin: {"evidenceId": "ev-0dbc7bbee2ce"}
+    fixture.clarified: {"evidenceId": "ev-0738697f5a4f", "linkedTo": "ev-772bfc696d11"}
+    case.input: {"case": "TKT3-01", "action": "create_draft(contribution)+confirm", "result": "CI green in 20 minutes", "actor": "emp-004"}
+  TKT3-01: PASS - Valid contribution conversation
+    case.input: {"case": "TKT3-02", "action": "create_draft(contribution) without result", "fields": ["situation", "action", "verifier"], "actor": "emp-004"}
+  TKT3-02: PASS - Missing result
+    case.input: {"case": "TKT3-03", "action": "draft_summary+validate_citations", "employeeId": "emp-004"}
+  TKT3-03: PASS - Source-linked summary
+    case.input: {"case": "TKT3-04", "action": "validate_citations with wrong quote + unknown ID"}
+  TKT3-04: PASS - Fabricated citation
+    case.input: {"case": "TKT3-05", "action": "inspect raterRole on all evidence rows", "employeeId": "emp-004"}
+  TKT3-05: PASS - Rater separation
+    case.input: {"case": "TKT3-06", "action": "review_view(emp-009)+structured_query wrong/unknown person"}
+  TKT3-06: PASS - Entity boundary
+    case.input: {"case": "TKT3-07", "action": "compare evidence row before/after linked response", "original": "ev-772bfc696d11"}
+  TKT3-07: PASS - Disagreement response
+    case.input: {"case": "TKT3-08", "action": "classify_response invalid/valid/employee", "responseId": "ev-0738697f5a4f"}
+  TKT3-08: PASS - Response classification
+    case.input: {"case": "TKT3-09", "action": "finalize as employee/hr/manager after provisional rating", "rating": "meets"}
+  TKT3-09: PASS - Access control
+    case.input: {"case": "TKT3-10", "action": "inspect rating_history entries"}
+  TKT3-10: PASS - Rating history
+    case.input: {"case": "TKT3-11", "action": "finalize with unresolved dispute, without/with acknowledgment"}
+  TKT3-11: PASS - Unresolved disagreement
+    case.input: {"case": "TKT3-12", "action": "hr_audit as hr-001 + rejection probe as manager"}
+  TKT3-12: PASS - HR audit
+Results: /opt/data/research/evidenceflow-poc/tkt3_results.json
+Log: /opt/data/research/evidenceflow-poc/tkt3_logs/tkt3-run-2026-10-16T060547.json
+Total: 12/12 passed
+
+COMMAND: python3 demo_scenario.py
+EXIT: 0
+ok   server up: health=ok mode=mock
+ok   contribution draft: draft-ee7ecc592524
+ok   contribution confirmed: evidence ev-d610996f116d created
+ok   peer feedback confirmed: evidence ev-244f00534c8d created
+ok   review view: roles=['peer', 'self']
+ok   summary draft: mode=mock claims=2 (every claim cites evidence)
+ok   provisional rating: {'valid': True, 'citationCount': 2, 'supportedClaims': 2, 'unsupportedClaims': 0, 'unsupportedIndexes': [], 'coverage': 100}
+ok   response confirmed (original untouched): evidence ev-4b5f8d24131a created
+ok   classify response: partially_accepted
+ok   employee finalize rejected: Only assigned manager may finalize rating.
+ok   manager finalize: True
+ok   HR audit: evidence=3 relations=1 history=2
+ok   settings masked: apiKey=******** (never stored in browser)
+DEMO_OK full scenario reproduced over HTTP
+
+COMMAND: node --check static/app.js
+EXIT: 0
+
+COMMAND: node --check static/graph.js
+EXIT: 0
+
+Original runtime/settings SHA-256 unchanged: True
+Contrast #070607 on #e2e2df: 15.58:1 (required 4.5) PASS
+Contrast #070607 on #f7f6f2: 18.71:1 (required 4.5) PASS
+Contrast #070607 on #fc5000: 6.06:1 (required 4.5) PASS
+Contrast #070607 on #f5f28e: 17.31:1 (required 4.5) PASS
+Contrast #514f4a on #e2e2df: 6.30:1 (required 4.5) PASS
+Contrast #514f4a on #f7f6f2: 7.56:1 (required 4.5) PASS
+Contrast #77746e on #f7f6f2: 4.31:1 (required 3) PASS
+
+BROWSER RECORDS: 57
+[
+  {
+    "check": "runtime empty",
+    "result": "No visible evidence matches this employee/source/filter. Change filters or confirm runtime evidence first."
+  },
+  {
+    "check": "cross employee rejection",
+    "result": "Cannot load graph: Employees may view only their own evidence graph.. Check source, actor and employee; retry Load graph."
+  },
+  {
+    "check": "node list and disclosure",
+    "result": {
+      "title": "communication",
+      "open": true
+    }
+  },
+  {
+    "check": "workspace initial",
+    "result": "Capture evidence\n\nStructured evidence is created only after you confirm the card below.\n\nAdd contribution\nGive feedback\nStart check-in"
+  },
+  {
+    "check": "empty draft validation",
+    "result": "Missing: result \u00b7 nothing stored."
+  },
+  {
+    "check": "draft confirmation",
+    "result": "Confirm before saving"
+  },
+  {
+    "check": "contribution confirmed",
+    "result": "Evidence created\nev-47603fb445ab selfQ4-2026collaboration\n\n\u201cRelease checklist approved with source trace\u201d\n\nSaved by employee emp-004 at 2026-10-16T05:59:57.621869Z\n\nBack"
+  },
+  {
+    "check": "checkin confirmed",
+    "result": "Evidence created"
+  },
+  {
+    "check": "feedback advisory",
+    "result": "Confirm before saving\nRubric looks good (advisory).\nemployee_id\temp-004\nperiod\tQ4-2026\ncompetency\tcollaboration\nbehavior\tShared release ownership context with dependent team\nimpact\tTeam could verify checklist before release\nfeedbackType\tcoaching\nvisibility\temployee_manager_hr\nrater_role\tpeer\n\nEvidence becomes immutable once confirmed.\n\nConfirm & save Discard"
+  },
+  {
+    "check": "peer feedback confirmed",
+    "result": "Evidence created"
+  },
+  {
+    "check": "dispute confirmed",
+    "result": [
+      "Respond to ev-dc8b552ae000",
+      "Response linked: ev-f6713a03d1fa"
+    ]
+  },
+  {
+    "check": "manager evidence review",
+    "result": "Manager review \u00b7 emp-004\n\nRater roles: employeepeerself \u00b7 Missing competencies: initiative\n\nID\tRole\tPeriod\tCompetency\tQuote\t\nev-47603fb445ab\tself\tQ4-2026\tcollaboration\tRelease checklist approved with source trace\t\nev-dc8b552ae000\temployee\tQ4-2026\tadaptability\tChecklist agreed\t\nev-7d5ca1c2f55a\tpeer\tQ4-2026\tcollaboration\tTeam could verify checklist before release\t\nev-f6713a03d1fa\temployee\t\t\tAdditional release context recorded in checklist.\tconflict\nDraft cited summary"
+  },
+  {
+    "check": "cited draft",
+    "result": {
+      "claims": 3,
+      "title": [
+        "Manager review \u00b7 emp-004",
+        "AI-assisted summary (mock mode)"
+      ]
+    }
+  },
+  {
+    "check": "edit visible",
+    "result": "Release checklist source retained"
+  },
+  {
+    "check": "remove claim indices",
+    "result": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "check": "rating recorded",
+    "result": "Recorded (citation coverage: 100%, 2 cited claims)"
+  },
+  {
+    "check": "empty final rationale rejected",
+    "result": "Rejected: Unresolved disagreement requires explicit acknowledgment and rationale."
+  },
+  {
+    "check": "unresolved response gate",
+    "result": "Rejected: Unresolved disagreement requires explicit acknowledgment and rationale."
+  },
+  {
+    "check": "manager finalized",
+    "result": "Review finalized."
+  },
+  {
+    "check": "review overflow 320",
+    "result": {
+      "width": 320,
+      "scroll": 320,
+      "ok": true
+    }
+  },
+  {
+    "check": "review overflow 768",
+    "result": {
+      "width": 768,
+      "scroll": 753,
+      "ok": true
+    }
+  },
+  {
+    "check": "review overflow 1280",
+    "result": {
+      "width": 1280,
+      "scroll": 1265,
+      "ok": true
+    }
+  },
+  {
+    "check": "HR audit",
+    "result": "HR audit \u00b7 emp-004\n\nfinalized evidence=4 relations=1 events=6\n\nRating history (append-only)\nStage\tBefore\tAfter\tActor\tTimestamp\tReason\nprovisional\tnot set\tmeets\tmanager-001\t2026-10-16T06:00:36.714302Z\tReviewed confirmed sources and employee response.\nfinal\tmeets\tmeets\tmanager-001\t2026-10-16T06:00:37.980264Z\tSources checked; unresolved employee context explicitly acknowledged.\nRelations\nOriginal\tResponse\tType\nev-dc8b552ae000\tev-f6713a03d1fa\tdisputed"
+  },
+  {
+    "check": "settings no browser storage",
+    "result": {
+      "key": "",
+      "local": 0,
+      "session": 0
+    }
+  },
+  {
+    "check": "settings save",
+    "result": "Saved (key masked server-side)."
+  },
+  {
+    "check": "connection test",
+    "result": "Not reachable: AI provider is not configured."
+  },
+  {
+    "check": "tkt3 trajectory",
+    "result": {
+      "heading": "12/12 test cases passed",
+      "visible": true,
+      "text": "expected: Structured evidence created only after user confirmation.inputs: [{\"case\": \"TKT3-01\", \"action\": \"create_draft(contribution)+confirm\", \"result\": \"CI green in 20 minutes\", "
+    }
+  },
+  {
+    "check": "tkt3 overflow 320",
+    "result": {
+      "width": 320,
+      "scroll": 320,
+      "ok": true
+    }
+  },
+  {
+    "check": "tkt3 overflow 768",
+    "result": {
+      "width": 768,
+      "scroll": 753,
+      "ok": true
+    }
+  },
+  {
+    "check": "tkt3 overflow 1280",
+    "result": {
+      "width": 1280,
+      "scroll": 1265,
+      "ok": true
+    }
+  },
+  {
+    "check": "workspace overflow 320",
+    "result": {
+      "width": 320,
+      "scroll": 320,
+      "ok": true
+    }
+  },
+  {
+    "check": "workspace overflow 768",
+    "result": {
+      "width": 768,
+      "scroll": 768,
+      "ok": true
+    }
+  },
+  {
+    "check": "workspace overflow 1280",
+    "result": {
+      "width": 1280,
+      "scroll": 1280,
+      "ok": true
+    }
+  },
+  {
+    "check": "font loaded",
+    "result": {
+      "anton": true,
+      "dm": true,
+      "body": "500",
+      "button": "500",
+      "primaryColor": "rgb(7, 6, 7)"
+    }
+  },
+  {
+    "check": "runtime exceptions",
+    "result": null
+  },
+  {
+    "check": "full graph counts",
+    "result": "emp-004 \u00b7 research \u00b7 24 evidence \u00b7 37 nodes \u00b7 72 links"
+  },
+  {
+    "check": "keyboard node and focus",
+    "result": {
+      "selected": "true",
+      "detail": "ev-00037",
+      "outline": "solid"
+    }
+  },
+  {
+    "check": "final graph width 320",
+    "result": {
+      "width": 320,
+      "scroll": 320,
+      "ok": true
+    }
+  },
+  {
+    "check": "final graph width 768",
+    "result": {
+      "width": 768,
+      "scroll": 753,
+      "ok": true
+    }
+  },
+  {
+    "check": "final graph width 1280",
+    "result": {
+      "width": 1280,
+      "scroll": 1265,
+      "ok": true
+    }
+  },
+  {
+    "check": "graph page errors",
+    "result": []
+  },
+  {
+    "check": "keyboard workspace focus",
+    "result": {
+      "text": "Skip to workspace",
+      "outline": "solid"
+    }
+  },
+  {
+    "check": "final workspace width 320",
+    "result": {
+      "width": 320,
+      "scroll": 320,
+      "ok": true
+    }
+  },
+  {
+    "check": "final workspace width 768",
+    "result": {
+      "width": 768,
+      "scroll": 768,
+      "ok": true
+    }
+  },
+  {
+    "check": "final workspace width 1280",
+    "result": {
+      "width": 1280,
+      "scroll": 1280,
+      "ok": true
+    }
+  },
+  {
+    "check": "mobile readable table contained",
+    "result": {
+      "page": 320,
+      "viewport": 320,
+      "table": 640,
+      "container": 248,
+      "font": "14px"
+    }
+  },
+  {
+    "check": "workspace page errors",
+    "result": []
+  },
+  {
+    "check": "runtime graph after capture",
+    "result": "emp-004 \u00b7 runtime \u00b7 4 evidence \u00b7 10 nodes \u00b7 13 links"
+  },
+  {
+    "check": "runtime original quote",
+    "result": "evidence\nid: evidence:ev-47603fb445ab\nquote: Release checklist approved with source trace\nquarter: Q4-2026\ncompetency: collaboration\nraterId: emp-004\nraterRole: self\ndate: 2026-10-16T05:59:57.621869Z\nkind: contribution\nstatus: active\nevidenceId: ev-47603fb445ab\n\nStored / provenance links:\nemployee:emp-004 \u00b7 has-evidence \u00b7 evidence:ev-47603fb445ab\nevidence:ev-47603fb445ab \u00b7 competency \u00b7 competency:collaboration\nevidence:ev-47603fb445ab \u00b7 rated-by \u00b7 rater:self:emp-004"
+  },
+  {
+    "check": "zoom controls",
+    "result": "translate(0 0) scale(1)"
+  },
+  {
+    "check": "drag pan",
+    "result": "translate(48.07692307692308 37.5) scale(1)"
+  },
+  {
+    "check": "graph role updates actor",
+    "result": {
+      "actor": "hr-001",
+      "status": "emp-004 \u00b7 runtime \u00b7 4 evidence \u00b7 10 nodes \u00b7 13 links"
+    }
+  },
+  {
+    "check": "employee change empty",
+    "result": "No visible evidence matches this employee/source/filter. Change filters or confirm runtime evidence first."
+  },
+  {
+    "check": "final filters",
+    "result": "emp-004 \u00b7 research \u00b7 3 evidence \u00b7 7 nodes \u00b7 9 links"
+  },
+  {
+    "check": "graph console errors",
+    "result": []
+  },
+  {
+    "check": "graph primary text color",
+    "result": "rgb(7, 6, 7)"
+  },
+  {
+    "check": "200 percent text reflow",
+    "result": {
+      "width": 1280,
+      "scroll": 1280
+    }
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "dataset_rows": 960,
+  "method": "structured entity/rater/competency filter + deterministic negative-signal rerank",
+  "queries": [
+    {
+      "query_id": "emp004_manager_peer",
+      "candidate_count": 18,
+      "returned": 5,
+      "relevant_returned": 5,
+      "precision_at_5": 1.0,
+      "recall_at_5": 0.5555555555555556,
+      "mrr": 1.0,
+      "abstention": false,
+      "top_ids": [
+        "ev-00526",
+        "ev-00525",
+        "ev-00523",
+        "ev-00528",
+        "ev-00521"
+      ]
+    },
+    {
+      "query_id": "joko_manager_collab",
+      "candidate_count": 2,
+      "returned": 2,
+      "relevant_returned": 1,
+      "precision_at_5": 0.5,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "abstention": false,
+      "top_ids": [
+        "ev-00120",
+        "ev-00598"
+      ]
+    },
+    {
+      "query_id": "emp999",
+      "candidate_count": 0,
+      "returned": 0,
+      "relevant_returned": 0,
+      "precision_at_5": null,
+      "recall_at_5": 1.0,
+      "mrr": 0.0,
+      "abstention": true,
+      "top_ids": []
+    }
+  ],
+  "pass_criteria": {
+    "entity_leakage_rate": 0,
+    "abstention_accuracy": 1,
+    "note": "precision labels use negative sentiment as gold proxy; requires manual validation"
+  },
+  "summary": {
+    "macro_precision_at_5": 0.75,
+    "macro_recall_at_5": 0.7777777777777778,
+    "macro_mrr": 1.0,
+    "abstention_accuracy": 1.0,
+    "entity_leakage_rate": 0.0,
+    "status": "hybrid baseline validated; reranker needs competency-aware labels"
+  }
+}

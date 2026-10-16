@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+runtime_*.json
+.env.*
+!.env.example
+.worker*
+worker.log
+worker_status.md
+run_worker.sh
+WORKER_BRIEF.md

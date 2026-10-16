@@ -1,0 +1,121 @@
+COMMAND: python3 run_checks.py
+--- test_shell.py
+shell checks passed
+--- test_query_layer.py
+query layer checks passed
+trajectory and divergence checks passed
+--- test_conversations.py
+conversation checks passed
+--- test_responses.py
+response checks passed
+--- test_governance.py
+governance checks passed
+--- test_settings.py
+settings panel checks passed
+--- test_graph.py
+GRAPH_HTTP_OK routes, scoped API, cross-employee 403
+GRAPH_CHECKS_OK scope, explicit source, validation, exact quotes, filters, response links, visibility, immutable runtime
+all local checks passed
+EXIT: 0
+
+COMMAND: python3 test_ui.py
+ok   index served 
+ok   app.js served 
+ok   no secret in app.js 
+ok   styles served 
+ok   traversal blocked 
+ok   outside-static blocked 
+ok   health has mode 
+ok   health aiState mock 
+ok   aiState carries no key 
+ok   hints endpoint advisory 
+ok   hints flag missing rubric 
+ok   hints clear when rubric met 
+ok   contribution draft 
+ok   contribution confirmed 
+ok   peer feedback confirmed 
+ok   clarification surfaced 
+ok   review view for UI 
+ok   summary for UI 
+ok   summary carries aiState 
+ok   rating recorded 
+ok   response confirmed 
+ok   classify works 
+ok   employee finalize rejected for UI 
+ok   manager finalize 
+ok   hr audit for UI 
+ok   masked key in UI path 
+ok   no key echo anywhere 
+ok   degraded after provider failure 
+ok   degraded detail present 
+ok   no key in degraded state 
+ok   back to mock after disable 
+UI_SMOKE_OK
+EXIT: 0
+
+COMMAND: python3 test_ai_adapter.py
+ai adapter checks passed
+EXIT: 0
+
+COMMAND: python3 tkt3_runner.py
+TKT3 validation run starting 2026-10-15T22:16:30.558604Z
+    fixture.begin: {"employee": "Dewi Nugraha", "employeeId": "emp-004", "periods": ["Q3-2026", "Q4-2026"]}
+    fixture.positive: {"evidenceId": "ev-2e011d5bded6"}
+    fixture.negative: {"evidenceId": "ev-140fd1005072"}
+    fixture.conflicting: {"evidenceId": "ev-a5ce4a4d2067"}
+    fixture.incomplete: {"state": "needs_clarification", "missing": ["result"]}
+    fixture.checkin: {"evidenceId": "ev-14b78f16fb51"}
+    fixture.clarified: {"evidenceId": "ev-f27628e4a5a7", "linkedTo": "ev-140fd1005072"}
+    case.input: {"case": "TKT3-01", "action": "create_draft(contribution)+confirm", "result": "CI green in 20 minutes", "actor": "emp-004"}
+  TKT3-01: PASS - Valid contribution conversation
+    case.input: {"case": "TKT3-02", "action": "create_draft(contribution) without result", "fields": ["situation", "action", "verifier"], "actor": "emp-004"}
+  TKT3-02: PASS - Missing result
+    case.input: {"case": "TKT3-03", "action": "draft_summary+validate_citations", "employeeId": "emp-004"}
+  TKT3-03: PASS - Source-linked summary
+    case.input: {"case": "TKT3-04", "action": "validate_citations with wrong quote + unknown ID"}
+  TKT3-04: PASS - Fabricated citation
+    case.input: {"case": "TKT3-05", "action": "inspect raterRole on all evidence rows", "employeeId": "emp-004"}
+  TKT3-05: PASS - Rater separation
+    case.input: {"case": "TKT3-06", "action": "review_view(emp-009)+structured_query wrong/unknown person"}
+  TKT3-06: PASS - Entity boundary
+    case.input: {"case": "TKT3-07", "action": "compare evidence row before/after linked response", "original": "ev-140fd1005072"}
+  TKT3-07: PASS - Disagreement response
+    case.input: {"case": "TKT3-08", "action": "classify_response invalid/valid/employee", "responseId": "ev-f27628e4a5a7"}
+  TKT3-08: PASS - Response classification
+    case.input: {"case": "TKT3-09", "action": "finalize as employee/hr/manager after provisional rating", "rating": "meets"}
+  TKT3-09: PASS - Access control
+    case.input: {"case": "TKT3-10", "action": "inspect rating_history entries"}
+  TKT3-10: PASS - Rating history
+    case.input: {"case": "TKT3-11", "action": "finalize with unresolved dispute, without/with acknowledgment"}
+  TKT3-11: PASS - Unresolved disagreement
+    case.input: {"case": "TKT3-12", "action": "hr_audit as hr-001 + rejection probe as manager"}
+  TKT3-12: PASS - HR audit
+Results: /opt/data/research/evidenceflow-poc/tkt3_results.json
+Log: /opt/data/research/evidenceflow-poc/tkt3_logs/tkt3-run-2026-10-15T221630.json
+Total: 12/12 passed
+EXIT: 0
+
+COMMAND: python3 demo_scenario.py
+ok   server up: health=ok mode=mock
+ok   contribution draft: draft-89d9c9d35302
+ok   contribution confirmed: evidence ev-d659c8e4042d created
+ok   peer feedback confirmed: evidence ev-e59674f0fd42 created
+ok   review view: roles=['peer', 'self']
+ok   summary draft: mode=mock claims=2 (every claim cites evidence)
+ok   provisional rating: {'valid': True, 'citationCount': 2, 'supportedClaims': 2, 'unsupportedClaims': 0, 'unsupportedIndexes': [], 'coverage': 100}
+ok   response confirmed (original untouched): evidence ev-e0b2129c0229 created
+ok   classify response: partially_accepted
+ok   employee finalize rejected: Only assigned manager may finalize rating.
+ok   manager finalize: True
+ok   HR audit: evidence=3 relations=1 history=2
+ok   settings masked: apiKey=******** (never stored in browser)
+DEMO_OK full scenario reproduced over HTTP
+EXIT: 0
+
+COMMAND: node --check static/app.js
+EXIT: 0
+
+COMMAND: node --check static/graph.js
+EXIT: 0
+
+RUNTIME_UNCHANGED (isolated regression run): True

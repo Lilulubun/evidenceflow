@@ -1,0 +1,291 @@
+{
+  "runStartedAt": "2026-10-15T19:58:01.246150Z",
+  "runFinishedAt": "2026-10-15T19:58:01.263333Z",
+  "fixture": {
+    "employee": "Dewi Nugraha",
+    "employeeId": "emp-004",
+    "periods": [
+      "Q3-2026",
+      "Q4-2026"
+    ],
+    "raterRoles": [
+      "self",
+      "peer",
+      "manager"
+    ],
+    "data": "synthetic controlled"
+  },
+  "results": [
+    {
+      "id": "TKT3-01",
+      "function": "Valid contribution conversation",
+      "expected": "Structured evidence created only after user confirmation.",
+      "observed": {
+        "draftState": "ready_for_confirmation",
+        "evidenceBefore": 5,
+        "evidenceAfterUnconfirmed": 5,
+        "evidenceAfterConfirm": 6,
+        "evidenceId": "ev-eec2fd53a0aa"
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-02",
+      "function": "Missing result",
+      "expected": "Clarification requested; unsupported result not stored as fact.",
+      "observed": {
+        "state": "needs_clarification",
+        "missing": [
+          "result"
+        ],
+        "storedIncompleteDrafts": 0
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-03",
+      "function": "Source-linked summary",
+      "expected": "Every claim links valid evidence ID and exact stored quote.",
+      "observed": {
+        "claimCount": 3,
+        "citationCheck": {
+          "valid": true,
+          "citationCount": 3,
+          "supportedClaims": 3,
+          "unsupportedClaims": 0,
+          "unsupportedIndexes": [],
+          "coverage": 100
+        },
+        "citedIds": [
+          "ev-0d60839c9796",
+          "ev-c189f26075ea",
+          "ev-88707998a28a"
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-04",
+      "function": "Fabricated citation",
+      "expected": "Invalid quote or unknown evidence ID rejected.",
+      "observed": {
+        "wrongQuote": {
+          "valid": false,
+          "reason": "Claim 0 has invalid citation."
+        },
+        "missingId": {
+          "valid": false,
+          "reason": "Claim 0 has invalid citation."
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-05",
+      "function": "Rater separation",
+      "expected": "Self, peer, manager evidence distinguishable (employee-authored rows labeled 'employee').",
+      "observed": {
+        "roles": [
+          "employee",
+          "manager",
+          "peer",
+          "self"
+        ],
+        "byRole": {
+          "self": [
+            "ev-0d60839c9796",
+            "ev-eec2fd53a0aa"
+          ],
+          "manager": [
+            "ev-c189f26075ea"
+          ],
+          "peer": [
+            "ev-88707998a28a"
+          ],
+          "employee": [
+            "ev-5f4964bbaf06",
+            "ev-045ab4dd02ae"
+          ]
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-06",
+      "function": "Entity boundary",
+      "expected": "Unknown/wrong employee returns no evidence from another employee.",
+      "observed": {
+        "unknownEmployeeEvidence": 0,
+        "queryRows": [
+          "emp-004"
+        ],
+        "unknownQuery": {
+          "answer": null,
+          "evidence": [],
+          "abstained": true,
+          "reason": "No evidence matches structured constraints."
+        }
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-07",
+      "function": "Disagreement response",
+      "expected": "Response creates new linked evidence; original unchanged.",
+      "observed": {
+        "originalImmutable": true,
+        "relation": {
+          "original_evidence_id": "ev-c189f26075ea",
+          "response_evidence_id": "ev-045ab4dd02ae",
+          "relationship": "clarified",
+          "created_at": "2026-10-15T19:58:01.251876Z"
+        },
+        "responseId": "ev-045ab4dd02ae"
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-08",
+      "function": "Response classification",
+      "expected": "Manager records classification with reason; invalid rejected.",
+      "observed": {
+        "invalid": {
+          "state": "rejected",
+          "reason": "Valid classification and reason required."
+        },
+        "recorded": "recorded",
+        "employeeRejected": "rejected",
+        "classification": "partially_accepted"
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-09",
+      "function": "Access control",
+      "expected": "Employee/HR finalize rejected; manager finalizes assigned review.",
+      "observed": {
+        "employeeFinalize": "Only assigned manager may finalize rating.",
+        "hrFinalize": "Only assigned manager may finalize rating.",
+        "managerFinalized": "finalized"
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-10",
+      "function": "Rating history",
+      "expected": "Append-only before/after, actor, timestamp, reason.",
+      "observed": {
+        "entries": [
+          {
+            "before": null,
+            "after": "meets",
+            "stage": "provisional",
+            "actor": "manager-001",
+            "hasTimestamp": true,
+            "hasReason": true
+          },
+          {
+            "before": "meets",
+            "after": "meets",
+            "stage": "final",
+            "actor": "manager-001",
+            "hasTimestamp": true,
+            "hasReason": true
+          }
+        ]
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-11",
+      "function": "Unresolved disagreement",
+      "expected": "Finalization requires explicit acknowledgment and rationale.",
+      "observed": {
+        "withoutAck": {
+          "state": "rejected",
+          "reason": "Unresolved disagreement requires explicit acknowledgment and rationale."
+        },
+        "withAck": "finalized",
+        "flag": true
+      },
+      "pass": true
+    },
+    {
+      "id": "TKT3-12",
+      "function": "HR audit",
+      "expected": "HR reconstructs evidence, responses, decisions, access history.",
+      "observed": {
+        "evidenceCount": 6,
+        "relations": 1,
+        "eventTypes": [
+          "evidence_created",
+          "rating_recorded",
+          "response_classified",
+          "review_finalized"
+        ],
+        "finalized": true,
+        "nonHrRejected": true
+      },
+      "pass": true
+    }
+  ],
+  "totals": {
+    "passed": 12,
+    "failed": 0,
+    "total": 12
+  },
+  "acceptance": {
+    "twelveOfTwelve": true,
+    "citationValidity": "100%",
+    "crossEmployeeLeakage": 0,
+    "originalEvidenceMutation": 0,
+    "unauthorizedFinalizations": 0
+  },
+  "claimBoundary": "Supports only: critical prototype functions demonstrated in a controlled synthetic scenario. Does not support bias elimination, organizational validity, production readiness, or improved employee performance.",
+  "transcript": [
+    {
+      "at": "2026-10-15T19:58:01.247593Z",
+      "step": "fixture.begin",
+      "employee": "Dewi Nugraha",
+      "employeeId": "emp-004",
+      "periods": [
+        "Q3-2026",
+        "Q4-2026"
+      ]
+    },
+    {
+      "at": "2026-10-15T19:58:01.248366Z",
+      "step": "fixture.positive",
+      "evidenceId": "ev-0d60839c9796"
+    },
+    {
+      "at": "2026-10-15T19:58:01.249580Z",
+      "step": "fixture.negative",
+      "evidenceId": "ev-c189f26075ea"
+    },
+    {
+      "at": "2026-10-15T19:58:01.250090Z",
+      "step": "fixture.conflicting",
+      "evidenceId": "ev-88707998a28a"
+    },
+    {
+      "at": "2026-10-15T19:58:01.251076Z",
+      "step": "fixture.incomplete",
+      "state": "needs_clarification",
+      "missing": [
+        "result"
+      ]
+    },
+    {
+      "at": "2026-10-15T19:58:01.251564Z",
+      "step": "fixture.checkin",
+      "evidenceId": "ev-5f4964bbaf06"
+    },
+    {
+      "at": "2026-10-15T19:58:01.252004Z",
+      "step": "fixture.clarified",
+      "evidenceId": "ev-045ab4dd02ae",
+      "linkedTo": "ev-c189f26075ea"
+    }
+  ]
+}

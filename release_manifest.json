@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-10-15T19:31:23Z",
+  "artifactCount": 25,
+  "sha256": {
+    "PRODUCT_CONTRACT.md": "37724a3d314be560838b915e8d09d185cbe253f469cdb29117689a014ee81d5b",
+    "KANBAN.md": "6f7846a25576fb46e543bf9eeb9b8cac1e69d9352e566dbdf71e9386afffce2d",
+    "WAYFINDER_MAP.md": "c4aae200c99e89c27331c8aca0008bad1d2b55d6cce343c94d96bee1074b0026",
+    "tkt3_validation_spec.md": "44ab4e7172b1c7a3b28fb53abcd380a0fd4ad4a612b6aecd02a4da980f98b57b",
+    "README.md": "e54b816565ee450cfa5107cd18d215b772fbe45425f610cc77c95742339bbc90",
+    ".env.example": "7036603f0a439ebdfbeea7b849601f16cbd48c552fe7c27910bef1882595029b",
+    "demo_scenario.py": "22db0e0bd3435858b591aba35125606e043d116a57ab339963bbdf5bdd2abe8f",
+    "take_screenshots.py": "556c2a3d4670fc3840c83bdae19e6501678f472cca85e91b0e0f2072cbb05d27",
+    "server.py": "63e2ff1a1ef35f0c5bc462b8fe6810cfc270fad092cd6f839a806c91b58169b2",
+    "app_core.py": "8f50d02e7f9f24604f730ec3a97b03fff04bb6accefc40fdcece24102221a9e5",
+    "governance.py": "7ed06f770618ae67ac8a54cb22affd98aa9c02a26cd3765017e02faa8c17cd84",
+    "ai_adapter.py": "a05144d39470b0237f87aa46691909f3453bb1c83a8b7f863f2d0eb1fad7c4f5",
+    "settings_store.py": "b08d8c69fc9b062bbbe68f34266916d844a0e01b4b77a77f6ec8a3ac4e66948b",
+    "query_layer.py": "dbb47b3a5ce83125c3a498ca930d61b248d2bfc77986be4c30edf4159e53ccb5",
+    "run_checks.py": "261204b0aa9def998255dde2fae310751435377d1a1d89195df37bf2bf7e3cb9",
+    "tkt3_runner.py": "71994c2dbb82cf69bb8b960d1b8c132ab23fb2c124e7ff85c989ada34cd8a2f4",
+    "test_shell.py": "31b220d82d9a8ceca9b63387beeb37a39d3702f6becd0d6608f81a6608b69779",
+    "test_query_layer.py": "58eff03f17059e2e97d26e62fcc356cd2f855f2d2e90e5536313b8b44de04497",
+    "test_conversations.py": "b0324ff7c928d7cec93dbb97d25778f7551cec19aa4afadc217cc0b97fb85eb0",
+    "test_responses.py": "fc6c20a75aa85503f9186756e6870e621a89753f14820dad57745620ecdc211c",
+    "test_governance.py": "8be2408788c58da2219ba2865df179d68c1add1e204596441006a0a5b88b3e20",
+    "test_settings.py": "8a4230ae69f17634ebcd8ba03081ef77f0f53024440664e06a1380d165873a4e",
+    "test_ai_adapter.py": "98367019a08f3f3643836969fa10b1db4a8bcef2ca063dea7003986b7952c15e",
+    "docs/DEMO.md": "e31be69995fd245a537bef961c72f25ce3b6e89a398932de4a1a4a8a71aa88ec",
+    "docs/architecture.svg": "ca4a24fe7904104ff417d4489c1b29233b883428f6fa82c1756cf5274594a43a"
+  },
+  "claim": "Controlled synthetic TKT 3 proof only. Not production-ready; no fairness or organizational-validity claim."
+}

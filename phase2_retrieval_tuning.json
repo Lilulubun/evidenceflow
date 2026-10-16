@@ -1,0 +1,98 @@
+[
+  {
+    "case": "emp004_exact",
+    "budget": "low",
+    "count": 74,
+    "top": [
+      "emp-010 handled the migration cleanly (peer assessment, delivery_quality, positive) | When: October 12, 2026 | Involving: emp-010 (employee under review)",
+      "emp-025 never missed a standup and always had status ready (peer feedback, reliability). | When: noted 2026-12-18 | Involving: emp-025",
+      "emp-010 isolated the memory leak in reporting service (peer assessment, problem_solving, positive) | When: November 13, 2026 | Involving: emp-010 (employee under review)",
+      "emp-036 handled the migration cleanly (self-assessment, positive) | When: December 27, 2026 | Involving: emp-036 (user) | Q4-2026 performance evidence",
+      "emp-032 refactored vendor integration to remove the N+1 queries (problem_solving, pos, self assessment) | When: 2026-11-12 | Involving: emp-032"
+    ]
+  },
+  {
+    "case": "emp004_exact",
+    "budget": "mid",
+    "count": 80,
+    "top": [
+      "emp-002 paired with a junior colleague on customer dashboard (two afternoons) and on payment-gateway (two afternoons) (peer assessments, collaboration, positive) | When: November 17 and December 19, 2026 | Involving: emp-002, junior colleague | Q4-2026 performance evidence",
+      "emp-002 refactored payment-gateway to remove N+1 queries (self assessment, problem_solving, positive) | When: 2026-11-25 | Involving: emp-002 | Q4-2026 performance evidence",
+      "emp-022 learned the new auth migration tooling quickly and context-switched to vendor integration mid-quarter without complaint (peer assessment, adaptability, positive). | When: December 24-26, 2026 | Involving: emp-022 (peer assessment) | Q4-2026 360-degree performance evidence",
+      "emp-010 handled the migration cleanly (peer assessment, delivery_quality, positive) | When: October 12, 2026 | Involving: emp-010 (employee under review)",
+      "emp-003 refused to switch to new customer dashboard process for a month (negative, adaptability, manager assessment) | When: December 23, 2026 | Involving: emp-003 (user) | Q4-2026 performance evidence"
+    ]
+  },
+  {
+    "case": "emp004_manager_peer",
+    "budget": "low",
+    "count": 68,
+    "top": [
+      "emp-008 never missed a standup and always had status ready (peer assessment) | When: November 21, 2026 | Involving: emp-008 (user); source: peer assessment | Reliability strength in Q4-2026 review",
+      "emp-018 peer assessment (adaptability, positive): context-switched to auth migration mid-quarter without complaint | When: 2026-12-28 | Involving: emp-018 (peer assessment) | Q4-2026 performance evidence",
+      "Manager assessment (positive): emp-036 isolated the memory leak in the reporting service | When: December 11, 2026 | Involving: emp-036 (user), manager | Q4-2026 performance evidence",
+      "Peer assessment (reliability, neg): emp-021 missed three standups in a row during the data pipeline work. | When: 2026-11-13 | Involving: emp-021 (user), peers | Negative reliability evidence",
+      "Peer and manager assessments (adaptability, neg): emp-021 refused to switch to the new k8s rollout process for a month (reported independently by both peer and manager). | When: Reported 2026-10-21 (manager) and 2026-11-06 (peer) | Involving: emp-021 (user), peers, manager | Repeated negative adaptability evidence from two sources in Q4-2026 review"
+    ]
+  },
+  {
+    "case": "emp004_manager_peer",
+    "budget": "mid",
+    "count": 65,
+    "top": [
+      "Manager assessment (positive): emp-036 isolated the memory leak in the reporting service | When: December 11, 2026 | Involving: emp-036 (user), manager | Q4-2026 performance evidence",
+      "emp-008 never missed a standup and always had status ready (peer assessment) | When: November 21, 2026 | Involving: emp-008 (user); source: peer assessment | Reliability strength in Q4-2026 review",
+      "Peer assessment (negative): emp-036 left auth migration code reviews with no comments | When: October 5, 2026 | Involving: emp-036 (user), peers | Q4-2026 performance evidence",
+      "emp-015 manager assessment (communication, positive): explained the mobile app incident root-cause clearly to the whole team | When: October 22, 2026 | Involving: emp-015 (manager assessment) | Q4-2026 performance evidence",
+      "emp-018 peer assessment (adaptability, positive): context-switched to auth migration mid-quarter without complaint | When: 2026-12-28 | Involving: emp-018 (peer assessment) | Q4-2026 performance evidence"
+    ]
+  },
+  {
+    "case": "joko_exact",
+    "budget": "low",
+    "count": 67,
+    "top": [
+      "emp-022 shared a reusable template for mobile app (self assessment) and a reusable template for search indexer (manager assessment) — collaboration, positive. | When: November 29 and December 5, 2026 | Involving: emp-022 (self and manager assessment) | Q4-2026 360-degree performance evidence",
+      "emp-010 unblocked three other people on mobile app (manager assessment, collaboration, positive) | When: November 16, 2026 | Involving: emp-010 (employee under review), three other people",
+      "emp-039 manager-assessed negatives: didn't respond to junior questions on payment-gateway (mentoring, 2026-11-11), declined to present reporting service findings (initiative, 2026-11-25) | When: 2026-11-11 to 2026-11-25 | Involving: emp-039 | Mentoring and initiative gaps flagged by manager in Q4-2026 review",
+      "Recall menghasilkan evidence nyata untuk Joko Handayani (emp-010): dua evidence collaboration negatif dari peran self/manager — re-implemented auth migration alone instead of pairing, dan went silent in data pipeline review thread for a week. Role evidence tersimpan: self, manager, peer. Retrieval juga menemukan proof positif delivery quality milik Joko. Hindsight tidak menggabungkan semua signal jadi satu rating. | When: October 15, 2026 | Involving: Joko Handayani (emp-010, subject of evidence), Hermes Agent | Bukti inti bahwa recall evidence per-role berfungsi dan rating tidak digabung",
+      "emp-039 self-assessment (collaboration, negative): re-implemented data pipeline alone instead of pairing | When: 2026-11-24 (event date) | Involving: emp-039 | Negative collaboration signal in Q4-2026 performance review"
+    ]
+  },
+  {
+    "case": "joko_exact",
+    "budget": "mid",
+    "count": 71,
+    "top": [
+      "emp-022 shared a reusable template for mobile app (self assessment) and a reusable template for search indexer (manager assessment) — collaboration, positive. | When: November 29 and December 5, 2026 | Involving: emp-022 (self and manager assessment) | Q4-2026 360-degree performance evidence",
+      "emp-011 shared a reusable template for the mobile app (manager-assessed collaboration, positive, Q4-2026 review). | When: 2026-12-06 | Involving: emp-011, manager | Performance evidence for Q4-2026 review",
+      "emp-010 unblocked three other people on mobile app (manager assessment, collaboration, positive) | When: November 16, 2026 | Involving: emp-010 (employee under review), three other people",
+      "emp-007 paired with a junior on CI pipeline for two afternoons (2026-10-03) and on data pipeline for two afternoons (2026-12-31) (manager assessment, collaboration, positive) | When: 2026-10-03 and 2026-12-31 | Involving: emp-007, junior colleague | Q4-2026 360-degree performance evidence",
+      "Recall menghasilkan evidence nyata untuk Joko Handayani (emp-010): dua evidence collaboration negatif dari peran self/manager — re-implemented auth migration alone instead of pairing, dan went silent in data pipeline review thread for a week. Role evidence tersimpan: self, manager, peer. Retrieval juga menemukan proof positif delivery quality milik Joko. Hindsight tidak menggabungkan semua signal jadi satu rating. | When: October 15, 2026 | Involving: Joko Handayani (emp-010, subject of evidence), Hermes Agent | Bukti inti bahwa recall evidence per-role berfungsi dan rating tidak digabung"
+    ]
+  },
+  {
+    "case": "unknown_exact",
+    "budget": "low",
+    "count": 76,
+    "top": [
+      "emp-026 carried on-call for reporting service without escalation once | When: 2026-10-21 | Involving: emp-026 | Manager assessment positive reliability item for Q4-2026",
+      "emp-003 merged mobile app without tests despite policy (negative, delivery_quality, self assessment) | When: November 25, 2026 | Involving: emp-003 (user) | Q4-2026 performance evidence",
+      "emp-010 isolated the memory leak in reporting service (peer assessment, problem_solving, positive) | When: November 13, 2026 | Involving: emp-010 (employee under review)",
+      "emp-005 missed three standups in a row during auth migration (peer-assessed reliability negative) | When: October 1, 2026 | Involving: emp-005 (per peer assessment) | Q4-2026 performance evidence",
+      "emp-006 unblocked three other people on payment-gateway, positive collaboration note in manager assessment | When: 2026-10-24 | Involving: emp-006, three teammates"
+    ]
+  },
+  {
+    "case": "unknown_exact",
+    "budget": "mid",
+    "count": 80,
+    "top": [
+      "emp-022 learned the new auth migration tooling quickly and context-switched to vendor integration mid-quarter without complaint (peer assessment, adaptability, positive). | When: December 24-26, 2026 | Involving: emp-022 (peer assessment) | Q4-2026 360-degree performance evidence",
+      "emp-003 declined to present reporting service findings (negative, initiative, peer assessment) | When: December 27, 2026 | Involving: emp-003 (user) | Q4-2026 performance evidence",
+      "emp-003 merged mobile app without tests despite policy (negative, delivery_quality, self assessment) | When: November 25, 2026 | Involving: emp-003 (user) | Q4-2026 performance evidence",
+      "emp-020 proposed and ran the auth migration spike without being asked (manager assessment, initiative pos) | When: 2026-12-07 | Involving: emp-020 | Q4-2026 performance evidence",
+      "emp-017 never missed a standup and always had status ready (peer, positive on reliability) | When: 2026-11-13 | Involving: emp-017; peer assessment"
+    ]
+  }
+]

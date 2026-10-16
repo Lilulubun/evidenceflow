@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="system-ui, sans-serif" font-size="14">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#334"/>
+    </marker>
+  </defs>
+  <rect width="960" height="560" fill="#f7f8fa"/>
+  <text x="480" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#1c2333">EVIDENCEFLOW architecture — controlled TKT 3 proof (stdlib only)</text>
+
+  <!-- Browser -->
+  <rect x="40" y="60" width="200" height="110" rx="10" fill="#e8f0fe" stroke="#4a6fa5"/>
+  <text x="140" y="85" text-anchor="middle" font-weight="bold">Browser UI (REF-001)</text>
+  <text x="140" y="107" text-anchor="middle">vanilla JS, no build</text>
+  <text x="140" y="127" text-anchor="middle">conversation + review + audit</text>
+  <text x="140" y="147" text-anchor="middle">no secrets in storage</text>
+
+  <!-- Server -->
+  <rect x="330" y="50" width="300" height="460" rx="10" fill="#fff" stroke="#334"/>
+  <text x="480" y="75" text-anchor="middle" font-weight="bold">server.py (http.server)</text>
+
+  <rect x="350" y="95" width="260" height="64" rx="6" fill="#eef3e8" stroke="#5a7d4f"/>
+  <text x="480" y="115" text-anchor="middle" font-weight="bold">Conversation routes</text>
+  <text x="480" y="133" text-anchor="middle">/api/conversations/{kind}/draft</text>
+  <text x="480" y="149" text-anchor="middle">/api/responses/draft · confirm</text>
+
+  <rect x="350" y="175" width="260" height="64" rx="6" fill="#fdf1e4" stroke="#b07d3f"/>
+  <text x="480" y="195" text-anchor="middle" font-weight="bold">Governance routes</text>
+  <text x="480" y="213" text-anchor="middle">/api/review/{view,summary-draft,rating}</text>
+  <text x="480" y="229" text-anchor="middle">classify-response · finalize · /api/hr/audit</text>
+
+  <rect x="350" y="255" width="260" height="52" rx="6" fill="#f1e8f7" stroke="#7d5a9e"/>
+  <text x="480" y="275" text-anchor="middle" font-weight="bold">settings_store.py</text>
+  <text x="480" y="293" text-anchor="middle">runtime_ai_settings.json · chmod 600 · masked key</text>
+
+  <rect x="350" y="323" width="260" height="64" rx="6" fill="#e8f4f6" stroke="#3f8296"/>
+  <text x="480" y="343" text-anchor="middle" font-weight="bold">ai_adapter.py</text>
+  <text x="480" y="361" text-anchor="middle">mock (deterministic) | OpenAI-compatible live</text>
+  <text x="480" y="377" text-anchor="middle">citation gate · failure → degrade to mock</text>
+
+  <rect x="350" y="403" width="260" height="52" rx="6" fill="#fbe9e9" stroke="#a54a4a"/>
+  <text x="480" y="423" text-anchor="middle" font-weight="bold">governance.py</text>
+  <text x="480" y="441" text-anchor="middle">citations · rating history · finalize rules · audit</text>
+
+  <rect x="350" y="471" width="260" height="28" rx="6" fill="#eef3e8" stroke="#5a7d4f"/>
+  <text x="480" y="490" text-anchor="middle">app_core.py — Store (JSON, atomic)</text>
+
+  <!-- Store -->
+  <rect x="720" y="300" width="200" height="120" rx="10" fill="#fff" stroke="#334"/>
+  <text x="820" y="325" text-anchor="middle" font-weight="bold">runtime_state.json</text>
+  <text x="820" y="347" text-anchor="middle">evidence[] immutable</text>
+  <text x="820" y="367" text-anchor="middle">relations[] links</text>
+  <text x="820" y="387" text-anchor="middle">events[] history</text>
+  <text x="820" y="407" text-anchor="middle">reviews{} append-only</text>
+
+  <!-- Arrows -->
+  <line x1="240" y1="115" x2="348" y2="115" stroke="#334" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="294" y="108" text-anchor="middle" font-size="12">HTTP JSON</text>
+  <line x1="610" y1="417" x2="718" y2="380" stroke="#334" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="664" y="380" text-anchor="middle" font-size="12">read/append</text>
+  <line x1="480" y1="307" x2="480" y2="323" stroke="#334" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="545" y="320" font-size="12">config</text>
+  <line x1="480" y1="387" x2="480" y2="403" stroke="#334" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="548" y="400" font-size="12">claims</text>
+
+  <!-- Boundary note -->
+  <rect x="40" y="300" width="230" height="170" rx="10" fill="#fffbe8" stroke="#b09a3f"/>
+  <text x="155" y="325" text-anchor="middle" font-weight="bold">Hard boundaries</text>
+  <text x="52" y="350">• Evidence immutable; responses link</text>
+  <text x="52" y="370">• Every claim cites ID + exact quote</text>
+  <text x="52" y="390">• Manager finalizes; HR audits</text>
+  <text x="52" y="410">• AI never rates</text>
+  <text x="52" y="430">• Key only server-side, masked</text>
+  <text x="52" y="455" font-style="italic" font-size="12">Claim: controlled synthetic</text>
+  <text x="52" y="470" font-style="italic" font-size="12">TKT 3 proof only.</text>
+</svg>
