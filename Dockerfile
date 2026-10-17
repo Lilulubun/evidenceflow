@@ -11,7 +11,7 @@ WORKDIR /app
 RUN groupadd --gid 10001 app \
     && useradd --uid 10001 --gid app --no-create-home app \
     && mkdir /data && chown app:app /data && chmod 700 /data
-COPY server.py app_core.py governance.py ai_adapter.py settings_store.py query_layer.py employee_graph.py evidence.json tkt3_results.json ./
+COPY server.py app_core.py governance.py ai_adapter.py chat.py knowledge.py settings_store.py query_layer.py employee_graph.py evidence.json tkt3_results.json ./
 COPY static/ ./static/
 USER 10001:10001
 EXPOSE 8000
