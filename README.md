@@ -79,6 +79,14 @@ loaded only by server process. API keys never appear in the browser, endpoint re
 
 Do not put secrets in source, fixtures, test output, or browser storage. Original evidence and linked-response workflows arrive in EVE-003/EVE-004. No endpoint selects ratings, promotions, or compensation.
 
+## Documentation
+
+Product decisions, research, TKT 3 evidence, and demo materials live in the separate documentation repository:
+
+https://github.com/Lilulubun/evidenceflow-docs
+
+The deployment guide remains in this repository at `docs/DEPLOY_DOKPLOY.md` because it belongs to the executable code release.
+
 ## Historical research artifacts
 
-Phase 1–3 retrieval artifacts remain in repository as prior research evidence. Current execution board and acceptance source: `KANBAN.md`, `PRODUCT_CONTRACT.md`, `tkt3_validation_spec.md`.
+Phase 1–3 retrieval artifacts are maintained in the documentation repository. Current executable checks remain in this repository.
