@@ -32,6 +32,16 @@ with tempfile.TemporaryDirectory() as directory:
     from ai_adapter import _completion_content
     assert _completion_content(array_content, {"baseUrl": "https://router.example/v1", "chatModel": "model"}, 200, "application/json") == "part one part two"
 
+    # SSE chunks accumulate delta, message, and legacy text content.
+    from ai_adapter import _sse_completion_content
+    sse = b"data: {\"choices\":[{\"delta\":{\"content\":\"part \"}}]}\n\ndata: {\"choices\":[{\"message\":{\"content\":\"two\"}}]}\n\ndata: {\"choices\":[{\"text\":\"!\"}]}\n\ndata: [DONE]\n"
+    assert _sse_completion_content(sse, {"baseUrl": "https://router.example", "chatModel": "model"}, 200, "text/event-stream") == "part two!"
+    try:
+        _sse_completion_content(b"data: not-json\ndata: [DONE]\n", {"baseUrl": "https://router.example", "chatModel": "model"}, 200, "text/event-stream")
+        raise AssertionError("malformed stream accepted")
+    except AIError as error:
+        assert str(error) == "Provider stream contained no message content."
+
     # Fabricated citation rejected.
     for bad in (
         json.dumps({"claims": [{"text": "Claim", "evidenceId": original["id"], "quote": "Fabricated"}]}),

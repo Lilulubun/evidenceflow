@@ -53,6 +53,38 @@ def _log_response(config, status, content_type, body, shape="unknown"):
     )
 
 
+def _sse_completion_content(raw, config, status, content_type):
+    """Extract text from OpenAI-compatible SSE without logging streamed data."""
+    parts = []
+    saw_event = False
+    for line in raw.decode("utf-8", "replace").splitlines():
+        if not line.startswith("data:"):
+            continue
+        data = line[5:].lstrip()
+        if data == "[DONE]":
+            continue
+        saw_event = True
+        try:
+            chunk = json.loads(data)
+        except json.JSONDecodeError:
+            continue
+        choices = chunk.get("choices") if isinstance(chunk, dict) else None
+        choice = choices[0] if isinstance(choices, list) and choices else {}
+        delta = choice.get("delta") if isinstance(choice, dict) else None
+        value = delta.get("content") if isinstance(delta, dict) else None
+        if not isinstance(value, str):
+            message = choice.get("message") if isinstance(choice, dict) else None
+            value = message.get("content") if isinstance(message, dict) else None
+        if not isinstance(value, str) and isinstance(choice, dict):
+            value = choice.get("text")
+        if isinstance(value, str):
+            parts.append(value)
+    if parts:
+        return "".join(parts)
+    _log_response(config, status, content_type, raw, "sse" if saw_event else "unknown")
+    raise AIError("Provider stream contained no message content.")
+
+
 def _completion_content(body, config, status, content_type):
     shape = type(body).__name__
     if isinstance(body, dict):
@@ -169,6 +201,8 @@ def call_chat(config, messages, timeout=15):
             raw = response.read()
             status = response.status
             content_type = response.headers.get("Content-Type", "")
+        if "text/event-stream" in content_type.lower() or raw.lstrip().startswith(b"data:"):
+            return _sse_completion_content(raw, config, status, content_type)
         try:
             body = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError) as error:
