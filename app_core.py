@@ -119,6 +119,9 @@ def build_preview(kind, actor, payload):
     employee_id = require_text(payload, "employeeId", errors)
     period = require_text(payload, "period", errors)
     competency = require_text(payload, "competency", errors)
+    competency_aliases = {"delivery quality": "delivery_quality", "delivery_quality": "delivery_quality", "adaptability": "adaptability", "collaboration": "collaboration", "initiative": "initiative"}
+    if competency in competency_aliases:
+        competency = competency_aliases[competency]
     if competency and competency not in VALID_COMPETENCIES:
         errors.append("competency must be supported")
     if kind == "contribution":
@@ -147,6 +150,10 @@ def build_preview(kind, actor, payload):
         preview["source"] = payload["source"]
     if payload.get("provenance"):
         preview["provenance"] = payload["provenance"]
+    if payload.get("raw_message"):
+        preview["raw_message"] = payload["raw_message"]
+    if payload.get("employeeName"):
+        preview["employee_name"] = payload["employeeName"]
     if errors:
         return {"state": "needs_clarification", "reason": "Required or valid fields missing.", "missing": errors}
     return {"state": "ready_for_confirmation", "preview": preview}
