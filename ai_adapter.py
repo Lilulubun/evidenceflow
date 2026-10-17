@@ -36,6 +36,8 @@ def _body_classification(raw):
     sample = raw[:512].lstrip()
     if not sample:
         return "empty"
+    if sample.startswith((b"data:", b"event:")) or b"\nevent:" in sample:
+        return "sse"
     if sample.startswith((b"{", b"[")):
         try:
             value = json.loads(raw.decode("utf-8"))
@@ -43,6 +45,32 @@ def _body_classification(raw):
         except (UnicodeDecodeError, json.JSONDecodeError):
             return "json-invalid"
     return "non-json"
+
+
+def _stream_diagnostic(raw):
+    events, data_count, invalid = {}, 0, 0
+    current = None
+    for line in raw.decode("utf-8", "replace").splitlines():
+        if line.startswith("event:"):
+            current = line[6:].strip()[:80] or "<unnamed>"
+            events[current] = events.get(current, 0) + 1
+        elif line.startswith("data:") and line[5:].strip() != "[DONE]":
+            data_count += 1
+            if current is None:
+                events["data"] = events.get("data", 0) + 1
+            try:
+                json.loads(line[5:].lstrip())
+            except json.JSONDecodeError:
+                invalid += 1
+    return "sse events=" + ",".join(f"{k}:{v}" for k, v in sorted(events.items())[:8]) + f" data={data_count} invalid={invalid}"
+
+
+def _delta_text(value):
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict):
+        return value.get("text", "") if isinstance(value.get("text", ""), str) else ""
+    return ""
 
 
 def _log_response(config, status, content_type, body, shape="unknown"):
@@ -70,12 +98,9 @@ def _text_values(value):
 
 
 def _sse_completion_content(raw, config, status, content_type):
-    """Extract text from OpenAI-compatible SSE without logging streamed data."""
-    parts, event_names, saw_event = [], set(), False
+    """Consume complete SSE stream; return visible text only."""
+    parts, saw_event = [], False
     for line in raw.decode("utf-8", "replace").splitlines():
-        if line.startswith("event:"):
-            event_names.add(line[6:].strip()[:80])
-            continue
         if not line.startswith("data:"):
             continue
         data = line[5:].lstrip()
@@ -86,14 +111,18 @@ def _sse_completion_content(raw, config, status, content_type):
             chunk = json.loads(data)
         except json.JSONDecodeError:
             continue
-        parts.extend(_text_values(chunk))
+        if isinstance(chunk, dict) and chunk.get("type") == "response.output_text.delta":
+            parts.append(_delta_text(chunk.get("delta")))
+        for choice in chunk.get("choices", []) if isinstance(chunk, dict) else []:
+            if not isinstance(choice, dict):
+                continue
+            delta = choice.get("delta", {})
+            if isinstance(delta, dict):
+                parts.append(_delta_text(delta.get("content")))
     text = "".join(parts).strip()
     if text:
         return text
-    shape = "sse" if saw_event else "unknown"
-    if event_names:
-        shape += " events=" + ",".join(sorted(event_names)[:8])
-    _log_response(config, status, content_type, raw, shape)
+    _log_response(config, status, content_type, raw, _stream_diagnostic(raw) if saw_event else "unknown")
     raise AIError("Provider stream contained no message content (text output absent; reasoning/tool calls only or unsupported SSE shape).")
 
 
@@ -201,11 +230,14 @@ def call_chat(config, messages, timeout=15):
         "messages": messages,
         "temperature": float(config.get("temperature", 0)),
         "max_tokens": int(config.get("tokenLimit", 1024)),
+        "stream": True,
+        "stream_options": {"include_usage": True},
+        "reasoning_effort": config.get("reasoningEffort", "medium"),
     }).encode("utf-8")
     req = urlrequest.Request(
         config["baseUrl"].rstrip("/") + "/chat/completions",
         data=payload,
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {config['apiKey']}"},
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {config['apiKey']}", "User-Agent": f"EvidenceFlow/{config.get('version', '0.1')}"},
         method="POST",
     )
     try:

@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib import request as urlrequest
 
-from ai_adapter import AIError, ai_config, discover_models, draft_summary, mock_summary, parse_real_summary, test_connection
+from ai_adapter import AIError, ai_config, call_chat, discover_models, draft_summary, mock_summary, parse_real_summary, test_connection
 from app_core import Store
 
 employee = {"id": "emp-004", "role": "employee"}
@@ -41,10 +41,10 @@ with tempfile.TemporaryDirectory() as directory:
     except AIError as error:
         assert "reasoning/tool calls only" in str(error)
 
-    # SSE chunks accumulate delta, message, and legacy text content.
+    # SSE chunks accumulate delta content; message/text legacy shapes ignored (stream-only contract).
     from ai_adapter import _sse_completion_content
-    sse = b"data: {\"choices\":[{\"delta\":{\"content\":\"part \"}}]}\n\ndata: {\"choices\":[{\"message\":{\"content\":\"two\"}}]}\n\ndata: {\"choices\":[{\"text\":\"!\"}]}\n\ndata: [DONE]\n"
-    assert _sse_completion_content(sse, {"baseUrl": "https://router.example", "chatModel": "model"}, 200, "text/event-stream") == "part two!"
+    sse = b"data: {\"choices\":[{\"delta\":{\"content\":\"part \"}}]}\n\ndata: {\"choices\":[{\"message\":{\"content\":\"two\"}}]}\n\ndata: {\"choices\":[{\"delta\":{\"content\":\"!\"}}]}\n\ndata: [DONE]\n"
+    assert _sse_completion_content(sse, {"baseUrl": "https://router.example", "chatModel": "model"}, 200, "text/event-stream") == "part !"
     try:
         _sse_completion_content(b"data: not-json\ndata: [DONE]\n", {"baseUrl": "https://router.example", "chatModel": "model"}, 200, "text/event-stream")
         raise AssertionError("malformed stream accepted")
@@ -112,6 +112,68 @@ with tempfile.TemporaryDirectory() as directory:
     live_claims, live_mode = draft_summary(live_config, rows)
     assert live_mode == "real" and last_state()["state"] == "live"
     ok_server.shutdown()
+
+    # Stream request contract: body must carry stream fields + medium reasoning; UA header set; key never echoed.
+    captured = {}
+    class CaptureHandler(BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.1"
+        def do_POST(self):
+            captured["body"] = json.loads(self.rfile.read(int(self.headers.get("Content-Length", "0"))))
+            captured["ua"] = self.headers.get("User-Agent", "")
+            frames = (
+                b'data: {"choices":[{"delta":{"reasoning_content":"thinking..."}}]}\n\n'
+                b"data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"id\":\"call_1\",\"function\":{\"name\":\"f\",\"arguments\":\"{}\"}}]}}]}\n\n"
+                b": keep-alive comment\n\n"
+                b'data: {"choices":[{"delta":{"content":"stream "}}]}\n\n'
+                b'data: {"choices":[{"delta":{"content":"answer"}}]}\n\n'
+                b"data: [DONE]\n\n"
+            )
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream")
+            self.send_header("Content-Length", str(len(frames)))
+            self.end_headers()
+            self.wfile.write(frames)
+        def log_message(self, *_):
+            pass
+    stream_server = ThreadingHTTPServer(("127.0.0.1", 0), CaptureHandler)
+    threading.Thread(target=stream_server.serve_forever, daemon=True).start()
+    stream_config = {**failing_config, "baseUrl": f"http://127.0.0.1:{stream_server.server_port}"}
+    content = call_chat(stream_config, [{"role": "user", "content": "hi"}])
+    assert content == "stream answer", content
+    assert captured["body"]["stream"] is True
+    assert captured["body"]["stream_options"] == {"include_usage": True}
+    assert captured["body"]["reasoning_effort"] == "medium"
+    assert captured["ua"].startswith("EvidenceFlow/")
+    stream_server.shutdown()
+
+    # reasoning-only + timeout sentinel stream: sentinel frame never leaks into output.
+    from ai_adapter import _sse_completion_content
+    sentinel_sse = (
+        b'data: {"choices":[{"delta":{"reasoning_content":"only reasoning"}}]}\n\n'
+        b'data: {"id":"chatcmpl-x","object":"chat.completion.chunk","created":1,"model":"m","choices":[{"index":0,"delta":{},"finish_reason":"length"}]}\n\n'
+        b'data: {"id":"chatcmpl-x","object":"chat.completion.chunk","choices":[],"usage":{"prompt_tokens":1}}\n\n'
+        b"data: [DONE]\n\n"
+    )
+    try:
+        _sse_completion_content(sentinel_sse, {"baseUrl": "https://router.example", "chatModel": "model"}, 200, "text/event-stream")
+        raise AssertionError("reasoning-only stream accepted")
+    except AIError as error:
+        assert "no message content" in str(error) and "only" in str(error)
+    # event-named frames accumulate via type field; non-delta content ignored.
+    named = (
+        b"event: response.output_text.delta\n"
+        b'data: {"type":"response.output_text.delta","delta":"alpha"}\n\n'
+        b"event: response.output_text.delta\n"
+        b'data: {"type":"response.output_text.delta","delta":"beta"}\n\n'
+        b"event: response.completed\n"
+        b'data: {"type":"response.completed"}\n\n'
+        b"data: [DONE]\n\n"
+    )
+    assert _sse_completion_content(named, {}, 200, "text/event-stream") == "alphabeta"
+    # Diagnostic shape reports event counts, never json-invalid for SSE.
+    from ai_adapter import _body_classification, _stream_diagnostic
+    assert _body_classification(b'event: response.output_text.delta\ndata: {"x":1}\n\n') == "sse"
+    assert _stream_diagnostic(named) == "sse events=response.completed:1,response.output_text.delta:2 data=3 invalid=0"
 
     # REF-005: feedback hints — advisory, deterministic in mock, never gating/rating.
     from ai_adapter import feedback_hints
