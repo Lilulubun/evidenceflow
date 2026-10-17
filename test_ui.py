@@ -67,6 +67,7 @@ def main():
             check("app.js served", status == 200 and "text/javascript" in ctype)
             check("no secret in app.js", "sk-" not in raw and "EVIDENCEFLOW_AI_API_KEY" not in raw)
             check("API key input masked", '"s-key", body.apiKey || "", "password", "new-password"' in raw)
+            check("chat composer visible after session", "const chatDone = last && ['confirmation_required', 'evidence_created'].includes(last.type);" in raw and '$("#chat-form").hidden=!chatSession || chatDone;' in raw)
             status, _, ctype = call("GET", "/styles.css")
             check("styles served", status == 200 and "text/css" in ctype)
             for font in ("anton-latin.woff2", "dm-sans-500-latin.woff2"):
