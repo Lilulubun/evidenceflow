@@ -6,6 +6,8 @@
 !app_core.py
 !governance.py
 !ai_adapter.py
+!chat.py
+!knowledge.py
 !settings_store.py
 !query_layer.py
 !employee_graph.py
