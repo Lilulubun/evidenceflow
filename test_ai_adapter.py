@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib import request as urlrequest
 
-from ai_adapter import AIError, ai_config, draft_summary, mock_summary, parse_real_summary, test_connection
+from ai_adapter import AIError, ai_config, discover_models, draft_summary, mock_summary, parse_real_summary, test_connection
 from app_core import Store
 
 employee = {"id": "emp-004", "role": "employee"}
@@ -18,6 +18,7 @@ with tempfile.TemporaryDirectory() as directory:
 
     # Mock default without credentials.
     assert ai_config({}) is False
+    assert discover_models({})["reason"] == "AI provider is not configured."
     claims, mode = draft_summary({}, rows)
     assert mode == "mock" and claims == mock_summary(rows)
 

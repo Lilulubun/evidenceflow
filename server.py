@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from ai_adapter import draft_summary as ai_draft_summary
+from ai_adapter import discover_models, draft_summary as ai_draft_summary
 from ai_adapter import feedback_hints, last_state, test_connection
 from app_core import Store
 from employee_graph import employee_graph
@@ -250,6 +250,9 @@ periods {esc(", ".join(data.get("fixture", {}).get("periods", [])))}. Synthetic 
             return
         if path == "/api/ai/test":
             self.send_json(200, test_connection(read_ai_config()))
+            return
+        if path == "/api/ai/models":
+            self.send_json(200, discover_models(read_ai_config()))
             return
         if path == "/api/feedback/hints":
             # REF-005: advisory hints only; never gates the draft, never rates.

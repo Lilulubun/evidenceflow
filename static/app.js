@@ -35,8 +35,8 @@ function card(title, html) {
   return section;
 }
 
-function field(label, id, value = "") {
-  return `<label class="field">${label}<input id="${id}" value="${value}"></label>`;
+function field(label, id, value = "", type = "text", autocomplete = "off") {
+  return `<label class="field">${label}<input id="${id}" type="${type}" autocomplete="${autocomplete}" value="${value}"></label>`;
 }
 
 /* ---------- AI mode banner (REF-003: mock/live/degraded visibility) ---------- */
@@ -264,9 +264,9 @@ async function showSettings() {
     `<p class="muted">The API key is stored server-side (file mode 0600) and every response shows only ${body.apiKey || "(unset)"}.
      It never enters browser storage or this page.</p>
      ${field("Base URL", "s-base", body.baseUrl || "")}${field("Chat model", "s-chat", body.chatModel || "")}
-     ${field("API key (masked echo keeps stored key)", "s-key", body.apiKey || "")}
+     ${field("API key (masked echo keeps stored key)", "s-key", body.apiKey || "", "password", "new-password")}
      <label class="field">Enabled <select id="s-enabled"><option value="false">false (mock)</option><option value="true">true</option></select></label>
-     <button class="primary" id="s-save">Save</button> <button id="s-test">Test connection</button> <span id="s-msg" class="muted"></span>`);
+     <button class="primary" id="s-save">Save</button> <button id="s-test">Test connection</button> <button id="s-models">Discover models</button> <span id="s-msg" class="muted"></span>`);
   screen.querySelector("#s-enabled").value = String(body.enabled === true);
   screen.querySelector("#s-save").onclick = async () => {
     const payload = { baseUrl: screen.querySelector("#s-base").value, chatModel: screen.querySelector("#s-chat").value,
@@ -278,6 +278,10 @@ async function showSettings() {
   screen.querySelector("#s-test").onclick = async () => {
     const { body: result } = await api("POST", "/api/ai/test", {});
     screen.querySelector("#s-msg").textContent = result.ok ? `OK (${result.model})` : `Not reachable: ${result.reason}`;
+  };
+  screen.querySelector("#s-models").onclick = async () => {
+    const { body: result } = await api("POST", "/api/ai/models", {});
+    screen.querySelector("#s-msg").textContent = result.ok ? (result.models.length ? `Models: ${result.models.join(", ")}` : "No models returned.") : `Discovery failed: ${result.reason}`;
   };
   $("#app").replaceChildren(screen);
 }

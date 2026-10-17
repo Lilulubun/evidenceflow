@@ -110,6 +110,44 @@ def ai_config(config):
     return ready
 
 
+def _provider_message(raw):
+    try:
+        value = json.loads(raw.decode("utf-8", "replace"))
+        if isinstance(value, dict):
+            error = value.get("error")
+            if isinstance(error, dict) and isinstance(error.get("message"), str):
+                return _redact(error["message"])[:240]
+            if isinstance(value.get("message"), str):
+                return _redact(value["message"])[:240]
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        pass
+    return ""
+
+
+def discover_models(config, timeout=8):
+    """Read OpenAI-compatible /models; return IDs and safe diagnostics only."""
+    if not ai_config(config):
+        return {"ok": False, "models": [], "reason": "AI provider is not configured."}
+    req = urlrequest.Request(config["baseUrl"].rstrip("/") + "/models", headers={"Authorization": f"Bearer {config['apiKey']}"})
+    try:
+        with urlrequest.urlopen(req, timeout=timeout) as response:
+            raw = response.read(65536)
+            status, content_type = response.status, response.headers.get("Content-Type", "")
+        body = json.loads(raw.decode("utf-8"))
+        models = body.get("data") if isinstance(body, dict) else None
+        if not isinstance(models, list):
+            return {"ok": False, "models": [], "status": status, "reason": "Provider /models response missing data."}
+        ids = sorted({item.get("id") for item in models if isinstance(item, dict) and isinstance(item.get("id"), str) and item.get("id")})
+        return {"ok": True, "models": ids, "status": status, "contentType": content_type.split(";", 1)[0]}
+    except urlerror.HTTPError as error:
+        raw = error.read(4096)
+        return {"ok": False, "models": [], "status": error.code, "reason": _provider_message(raw) or f"Provider returned HTTP {error.code}."}
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return {"ok": False, "models": [], "status": status if "status" in locals() else None, "reason": "Provider /models response was not valid JSON."}
+    except Exception as error:
+        return {"ok": False, "models": [], "reason": f"Provider models request failed: {type(error).__name__}"}
+
+
 def call_chat(config, messages, timeout=15):
     """Blocking OpenAI-compatible /chat/completions call; raises AIError on any failure."""
     if not ai_config(config):
