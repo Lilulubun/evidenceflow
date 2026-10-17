@@ -219,7 +219,7 @@ periods {esc(", ".join(data.get("fixture", {}).get("periods", [])))}. Synthetic 
         if body is None:
             return
         if path == "/api/chat/session":
-            sid = create_session(store(), body.get("actor"))
+            sid = create_session(store(), body.get("actor"), body.get("kind", "contribution"))
             self.send_json(201 if sid else 422, {"sessionId": sid, "events": get_session(store(), sid)["events"]} if sid else {"error": {"code": "VALIDATION_ERROR", "message": "valid actor required"}})
             return
         if path == "/api/chat/message":
