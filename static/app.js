@@ -3,6 +3,11 @@
 
 const $ = (sel) => document.querySelector(sel);
 const EMP = "emp-004";
+let chatSession = null;
+function chatRender(events) { const stream = $("#chat-stream"); stream.replaceChildren(...events.map(e => { const p=document.createElement('p'); p.className=`chat-event ${e.type}`; p.textContent=e.text || (e.preview ? 'Evidence preview ready.' : ''); return p; })); const last=events[events.length-1]; $("#chat-form").hidden=!(last && last.type === 'clarification_requested'); if (last && last.type === 'confirmation_required') { const b=document.createElement('button'); b.className='primary'; b.textContent='Confirm and save evidence'; b.onclick=async()=>{const r=await api('POST','/api/chat/confirm',{sessionId:chatSession}); chatRender(r.body.events || []);}; stream.append(b); } }
+async function startChat() { const r=await api('POST','/api/chat/session',{actor:actor()}); chatSession=r.body.sessionId; chatRender(r.body.events || []); $("#chat-input").focus(); }
+$("#chat-add").onclick=startChat; $("#chat-feedback").onclick=()=>{ $("#chat-stream").replaceChildren(Object.assign(document.createElement('p'),{textContent:'Feedback flow remains available below; choose Capture to use its governed form.'})); }; $("#chat-checkin").onclick=()=>{ $("#chat-stream").replaceChildren(Object.assign(document.createElement('p'),{textContent:'Check-in flow remains available below; choose Capture to use its governed form.'})); };
+$("#chat-form").onsubmit=async(e)=>{e.preventDefault(); const input=$("#chat-input"); const r=await api('POST','/api/chat/message',{sessionId:chatSession,message:input.value}); input.value=''; chatRender(r.body.events || []); input.focus();};
 
 function actor() { return { id: $("#actor-id").value.trim() || "demo", role: $("#role").value }; }
 

@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 from ai_adapter import discover_models, draft_summary as ai_draft_summary
 from ai_adapter import feedback_hints, last_state, test_connection
 from app_core import Store
+from chat import create_session, get_session, message as chat_message, confirm as chat_confirm, SYSTEM_PROMPT
 from employee_graph import employee_graph
 from governance import classify_response, create_or_update_review, draft_summary, finalize_review, hr_audit, review_view
 from query_layer import query
@@ -96,6 +97,11 @@ class Handler(BaseHTTPRequestHandler):
             self._api_tkt3()
         elif path == "/health":
             self.send_json(200, {"status": "ok", **settings(), "aiState": last_state()})
+        elif path.startswith("/api/chat/session/"):
+            sid = path.rsplit("/", 1)[-1]; session = get_session(store(), sid)
+            self.send_json(200, {"sessionId": sid, "events": session["events"]} if session else {"error": {"code": "NOT_FOUND", "message": "Unknown session"}})
+        elif path == "/api/chat/policy":
+            self.send_json(200, {"systemPrompt": SYSTEM_PROMPT, "eventTypes": sorted(__import__('chat').EVENT_TYPES)})
         elif path == "/api/settings":
             view = masked_settings()
             view["mode"] = settings()["mode"]
@@ -211,6 +217,18 @@ periods {esc(", ".join(data.get("fixture", {}).get("periods", [])))}. Synthetic 
         path = urlparse(self.path).path
         body = self.read_json()
         if body is None:
+            return
+        if path == "/api/chat/session":
+            sid = create_session(store(), body.get("actor"))
+            self.send_json(201 if sid else 422, {"sessionId": sid, "events": get_session(store(), sid)["events"]} if sid else {"error": {"code": "VALIDATION_ERROR", "message": "valid actor required"}})
+            return
+        if path == "/api/chat/message":
+            result = chat_message(store(), body.get("sessionId"), body.get("message"))
+            self.send_json(200 if result and result.get("state") != "error" else 422, result or {"error": {"code": "NOT_FOUND", "message": "Unknown session"}})
+            return
+        if path == "/api/chat/confirm":
+            result = chat_confirm(store(), body.get("sessionId"))
+            self.send_json(201 if result.get("state") == "confirmed" else 403, result)
             return
         if path == "/api/graph":
             status, result = employee_graph(store(), body)
