@@ -66,6 +66,7 @@ def main():
             status, raw, ctype = call("GET", "/app.js")
             check("app.js served", status == 200 and "text/javascript" in ctype)
             check("no secret in app.js", "sk-" not in raw and "EVIDENCEFLOW_AI_API_KEY" not in raw)
+            check("API key input masked", '"s-key", body.apiKey || "", "password", "new-password"' in raw)
             status, _, ctype = call("GET", "/styles.css")
             check("styles served", status == 200 and "text/css" in ctype)
             for font in ("anton-latin.woff2", "dm-sans-500-latin.woff2"):
