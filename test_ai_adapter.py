@@ -29,8 +29,17 @@ with tempfile.TemporaryDirectory() as directory:
 
     # OpenAI-compatible content arrays accepted.
     array_content = {"choices": [{"message": {"content": [{"type": "text", "text": "part one"}, {"text": " part two"}]}}]}
-    from ai_adapter import _completion_content
+    from ai_adapter import _completion_content, _sse_completion_content
     assert _completion_content(array_content, {"baseUrl": "https://router.example/v1", "chatModel": "model"}, 200, "application/json") == "part one part two"
+    assert _completion_content({"output_text": "response text"}, {}, 200, "application/json") == "response text"
+    assert _completion_content({"output": [{"content": [{"text": "output text"}]}]}, {}, 200, "application/json") == "output text"
+    event_sse = b'event: response.output_text.delta\ndata: {"type":"response.output_text.delta","delta":"event text"}\n\ndata: [DONE]\n'
+    assert _sse_completion_content(event_sse, {}, 200, "text/event-stream") == "event text"
+    try:
+        _completion_content({"output": [{"type": "function_call", "name": "tool"}]}, {}, 200, "application/json")
+        raise AssertionError("tool-only response accepted")
+    except AIError as error:
+        assert "reasoning/tool calls only" in str(error)
 
     # SSE chunks accumulate delta, message, and legacy text content.
     from ai_adapter import _sse_completion_content
@@ -40,7 +49,7 @@ with tempfile.TemporaryDirectory() as directory:
         _sse_completion_content(b"data: not-json\ndata: [DONE]\n", {"baseUrl": "https://router.example", "chatModel": "model"}, 200, "text/event-stream")
         raise AssertionError("malformed stream accepted")
     except AIError as error:
-        assert str(error) == "Provider stream contained no message content."
+        assert "Provider stream contained no message content" in str(error)
 
     # Fabricated citation rejected.
     for bad in (

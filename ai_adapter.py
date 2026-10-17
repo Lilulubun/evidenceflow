@@ -53,11 +53,29 @@ def _log_response(config, status, content_type, body, shape="unknown"):
     )
 
 
+def _text_values(value):
+    """Yield message text from common OpenAI and Responses API shapes."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, list):
+        for item in value:
+            yield from _text_values(item)
+    elif isinstance(value, dict):
+        for key in ("content", "text", "output_text"):
+            if key in value:
+                yield from _text_values(value[key])
+        for key in ("choices", "delta", "message", "output", "response"):
+            if key in value:
+                yield from _text_values(value[key])
+
+
 def _sse_completion_content(raw, config, status, content_type):
     """Extract text from OpenAI-compatible SSE without logging streamed data."""
-    parts = []
-    saw_event = False
+    parts, event_names, saw_event = [], set(), False
     for line in raw.decode("utf-8", "replace").splitlines():
+        if line.startswith("event:"):
+            event_names.add(line[6:].strip()[:80])
+            continue
         if not line.startswith("data:"):
             continue
         data = line[5:].lstrip()
@@ -68,46 +86,40 @@ def _sse_completion_content(raw, config, status, content_type):
             chunk = json.loads(data)
         except json.JSONDecodeError:
             continue
-        choices = chunk.get("choices") if isinstance(chunk, dict) else None
-        choice = choices[0] if isinstance(choices, list) and choices else {}
-        delta = choice.get("delta") if isinstance(choice, dict) else None
-        value = delta.get("content") if isinstance(delta, dict) else None
-        if not isinstance(value, str):
-            message = choice.get("message") if isinstance(choice, dict) else None
-            value = message.get("content") if isinstance(message, dict) else None
-        if not isinstance(value, str) and isinstance(choice, dict):
-            value = choice.get("text")
-        if isinstance(value, str):
-            parts.append(value)
-    if parts:
-        return "".join(parts)
-    _log_response(config, status, content_type, raw, "sse" if saw_event else "unknown")
-    raise AIError("Provider stream contained no message content.")
+        parts.extend(_text_values(chunk))
+    text = "".join(parts).strip()
+    if text:
+        return text
+    shape = "sse" if saw_event else "unknown"
+    if event_names:
+        shape += " events=" + ",".join(sorted(event_names)[:8])
+    _log_response(config, status, content_type, raw, shape)
+    raise AIError("Provider stream contained no message content (text output absent; reasoning/tool calls only or unsupported SSE shape).")
+
+
+def _response_completion_content(body, config, status, content_type):
+    """Extract text from Responses API JSON without exposing response body."""
+    parts = list(_text_values(body))
+    text = "".join(parts).strip()
+    if text:
+        return text
+    keys = sorted(str(key) for key in body)[:20] if isinstance(body, dict) else []
+    _log_response(config, status, content_type, json.dumps(body).encode(), "json keys=" + ",".join(keys))
+    raise AIError("Provider response contained no message content (reasoning/tool calls only or unsupported response shape).")
 
 
 def _completion_content(body, config, status, content_type):
-    shape = type(body).__name__
-    if isinstance(body, dict):
-        shape += f" keys={sorted(str(key) for key in body)[:20]}"
-    _log_response(config, status, content_type, json.dumps(body, ensure_ascii=False).encode("utf-8"), shape)
+    """Extract text from chat completions and Responses API JSON."""
+    if isinstance(body, dict) and ("choices" not in body or "output" in body or "output_text" in body):
+        return _response_completion_content(body, config, status, content_type)
     choices = body.get("choices") if isinstance(body, dict) else None
     if not isinstance(choices, list) or not choices:
         raise AIError("Provider response missing choices.")
-    message = choices[0].get("message") if isinstance(choices[0], dict) else None
-    content = message.get("content") if isinstance(message, dict) else None
-    if isinstance(content, str) and content.strip():
-        return content
-    if isinstance(content, list):
-        parts = []
-        for part in content:
-            if isinstance(part, str):
-                parts.append(part)
-            elif isinstance(part, dict) and isinstance(part.get("text"), str):
-                parts.append(part["text"])
-        joined = "".join(parts).strip()
-        if joined:
-            return joined
-    raise AIError("Provider response missing message content.")
+    text = "".join(_text_values(choices[0])).strip()
+    if text:
+        return text
+    _log_response(config, status, content_type, json.dumps(body).encode(), "json choices-no-text")
+    raise AIError("Provider response missing message content (reasoning/tool calls only or unsupported shape).")
 
 from governance import evidence_quote
 
