@@ -17,7 +17,10 @@ def create_session(store, actor, kind="contribution"):
     if not isinstance(actor, dict) or actor.get("role") not in {"employee", "peer", "manager", "hr"} or not actor.get("id") or kind not in QUESTIONS:
         return None
     data = store._read(); sid = f"thread-{uuid.uuid4().hex[:12]}"
-    data.setdefault("chat_sessions", {})[sid] = {"actor": actor, "kind": kind, "answers": {}, "events": [event("assistant_delta", f"I can help with {kind}. Draft stays uncommitted until you confirm it.")], "createdAt": _now()}
+    events = [event("assistant_delta", f"I can help with {kind}. Draft stays uncommitted until you confirm it.")]
+    first_key, first_question = QUESTIONS[kind][0]
+    events.append(event("clarification_requested", first_question, field=first_key, progress=f"0/{len(QUESTIONS[kind])}"))
+    data.setdefault("chat_sessions", {})[sid] = {"actor": actor, "kind": kind, "answers": {}, "events": events, "createdAt": _now()}
     store._write(data); return sid
 
 def get_session(store, sid): return store._read().get("chat_sessions", {}).get(sid)
@@ -49,7 +52,7 @@ def message(store, sid, text):
         session["answers"][missing] = text
     next_item = next(((key, q) for key, q in questions if key not in session["answers"]), None)
     if next_item:
-        session["events"].append(event("clarification_requested", next_item[1], field=next_item[0]))
+        session["events"].append(event("clarification_requested", next_item[1], field=next_item[0], progress=f"{len(session['answers'])}/{len(questions)}"))
     else:
         preview = dict(session["answers"]); preview["rater_role"] = "self" if session["actor"]["role"] == "employee" else session["actor"]["role"]
         session["events"].append(event("draft_updated", "Draft updated. Review before saving.", draft=preview))
