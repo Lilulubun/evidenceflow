@@ -3,7 +3,7 @@ import uuid
 from datetime import UTC, datetime
 
 SYSTEM_PROMPT = """EVIDENCEFLOW assistant asks one question at a time; no invented evidence/quotes/dates/actors; draft not evidence until confirmation; originals immutable; disagreement creates new linked evidence; citations required; manager owns rating, HR audits; AI never decides."""
-EVENT_TYPES = {"user_message", "assistant_delta", "clarification_requested", "draft_updated", "evidence_preview", "confirmation_required", "evidence_created", "tool_status", "error", "done"}
+EVENT_TYPES = {"user_message", "assistant_delta", "clarification_requested", "draft_updated", "evidence_preview", "confirmation_required", "evidence_created", "tool_status", "knowledge_query_started", "knowledge_result", "citations", "conflict", "abstained", "error", "done"}
 QUESTIONS = [("employeeId", "Which employee should this contribution belong to?"), ("period", "What review period does it cover?"), ("competency", "Which competency does it show? (collaboration, initiative, adaptability, delivery_quality)"), ("situation", "What situation happened?"), ("action", "What did you do?"), ("result", "What result or impact can be verified?"), ("verifier", "Who or what can verify it?")]
 
 def _now(): return datetime.now(UTC).isoformat().replace("+00:00", "Z")
@@ -24,6 +24,20 @@ def message(store, sid, text):
     text = text.strip() if isinstance(text, str) else ""
     if not text: return {"state": "error", "reason": "message must be non-empty"}
     session["events"].append(event("user_message", text))
+    factual = any(word in text.lower() for word in ("how did", "what evidence", "evidence", "perform", "performance"))
+    if factual:
+        from knowledge import search_employee_knowledge
+        employee_id = session["actor"].get("id") if session["actor"].get("role") == "employee" else None
+        result = search_employee_knowledge(store, session["actor"], text, employee_id=employee_id, source="research")
+        session["events"].append(event("knowledge_query_started", "Read-only research evidence lookup.", source="research", employeeId=employee_id))
+        kind = "knowledge_result" if result.get("state") == "answered" else "abstained"
+        session["events"].append(event(kind, result.get("answer") or result.get("reason", "No evidence."), result=result))
+        if result.get("citations"):
+            session["events"].append(event("citations", "Citations validated.", citations=result["citations"], evidence=result.get("evidence", [])))
+        if result.get("conflict"):
+            session["events"].append(event("conflict", "Observed evidence spans multiple rater roles."))
+        store._write(data)
+        return {"state": "ok", "events": session["events"][-5:], "knowledge": result}
     missing = next((key for key, _ in QUESTIONS if key not in session["answers"]), None)
     if missing:
         session["answers"][missing] = text
