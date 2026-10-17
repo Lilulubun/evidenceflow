@@ -22,4 +22,9 @@ with tempfile.TemporaryDirectory() as directory:
 
     checkin = storage.create_draft("checkin", actor, {"employeeId": "emp-004", "period": "Q4-2026", "competency": "adaptability", "progress": "Completed migration", "obstacle": "Vendor delay", "support": "Escalation help", "owner": "manager-001", "dueDate": "2026-12-01", "successEvidence": "Vendor confirmation"})
     assert checkin["state"] == "ready_for_confirmation"
+    saved_checkin = storage.confirm_draft(checkin["draftId"], actor)
+    row = next(item for item in storage.snapshot()["evidence"] if item["id"] == saved_checkin["evidence"]["id"])
+    assert row["data"]["progress"] == "Completed migration"
+    assert row["data"]["successEvidence"] == "Vendor confirmation"
+    assert row["data"]["rater_role"] == "employee"
 print("conversation checks passed")

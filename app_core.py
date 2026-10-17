@@ -143,6 +143,10 @@ def build_preview(kind, actor, payload):
         preview = {"employee_id": employee_id, "period": period, "competency": competency, **fields, "rater_role": actor["role"]}
     else:
         return {"state": "rejected", "reason": "Unsupported conversation type."}
+    if payload.get("source"):
+        preview["source"] = payload["source"]
+    if payload.get("provenance"):
+        preview["provenance"] = payload["provenance"]
     if errors:
         return {"state": "needs_clarification", "reason": "Required or valid fields missing.", "missing": errors}
     return {"state": "ready_for_confirmation", "preview": preview}

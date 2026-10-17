@@ -57,14 +57,19 @@ def message(store, sid, text):
         session["events"].append(event("clarification_requested", missing[1], field=missing[0], progress=f"{len(session['answers'])}/{len(questions)}"))
     else:
         preview = dict(session["answers"]); preview["rater_role"] = "self" if session["actor"]["role"] == "employee" else session["actor"]["role"]
-        session["events"] += [event("draft_updated", "I captured all required details. Please review this draft.", draft=preview), event("evidence_preview", "Evidence preview", preview=preview), event("confirmation_required", "Confirm to create immutable evidence.", preview=preview)]
+        preview["source"] = "conversation"
+        preview["provenance"] = {"source": "conversation", "sessionId": sid, "actor": session["actor"]}
+        session["events"] += [event("assistant_message", "I captured all required details. Please review this draft before saving."), event("draft_updated", "I captured all required details. Please review this draft.", draft=preview), event("evidence_preview", "Evidence preview", preview=preview), event("confirmation_required", "Confirm to create immutable evidence.", preview=preview)]
     session["events"].append(event("turn_completed", "Turn complete")); store._write(data)
     return {"state": "ok", "events": session["events"][-6:], "complete": not missing}
 
 def confirm(store, sid):
     session = get_session(store, sid)
     if not session or len(session["answers"]) < len(QUESTIONS[session.get("kind", "contribution")]): return {"state": "rejected", "reason": "Complete conversation before confirmation."}
-    result = store.create_draft(session["kind"], session["actor"], session["answers"])
+    payload = dict(session["answers"])
+    payload["source"] = "conversation"
+    payload["provenance"] = {"source": "conversation", "sessionId": sid, "actor": session["actor"]}
+    result = store.create_draft(session["kind"], session["actor"], payload)
     if result.get("state") != "ready_for_confirmation": return result
     saved = store.confirm_draft(result["draftId"], session["actor"])
     data = store._read(); data["chat_sessions"][sid]["events"].append(event("evidence_created", "Evidence created after confirmation.", evidence=saved.get("evidence"))); store._write(data)
