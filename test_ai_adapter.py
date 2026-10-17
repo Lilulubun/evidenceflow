@@ -26,6 +26,11 @@ with tempfile.TemporaryDirectory() as directory:
     parsed = parse_real_summary(valid, rows)
     assert parsed[0]["evidenceId"] == original["id"]
 
+    # OpenAI-compatible content arrays accepted.
+    array_content = {"choices": [{"message": {"content": [{"type": "text", "text": "part one"}, {"text": " part two"}]}}]}
+    from ai_adapter import _completion_content
+    assert _completion_content(array_content, {"baseUrl": "https://router.example/v1", "chatModel": "model"}, 200, "application/json") == "part one part two"
+
     # Fabricated citation rejected.
     for bad in (
         json.dumps({"claims": [{"text": "Claim", "evidenceId": original["id"], "quote": "Fabricated"}]}),

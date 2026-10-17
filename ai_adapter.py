@@ -5,8 +5,77 @@ summaries. It never selects ratings. Every AI citation must match an existing
 evidence ID and exact stored quote or it is rejected.
 """
 import json
+import logging
 import re
+from urllib import error as urlerror
 from urllib import request as urlrequest
+from urllib.parse import urlsplit
+
+logger = logging.getLogger(__name__)
+
+
+def _safe_base_url(value):
+    """Return provider origin only; never log path, query, or credentials."""
+    try:
+        parsed = urlsplit(str(value))
+        return f"{parsed.scheme}://{parsed.hostname or ''}" + (f":{parsed.port}" if parsed.port else "")
+    except (TypeError, ValueError):
+        return "<invalid-url>"
+
+
+def _redact(value):
+    """Remove secret-like values from bounded diagnostics."""
+    text = str(value)
+    text = re.sub(r"(?i)(bearer\\s+)[^\\s,]+", r"\\1<redacted>", text)
+    text = re.sub(r"(?i)(api[_-]?key|authorization|token|secret|password)([=:]\\s*)[^,;\\s]+", r"\\1\\2<redacted>", text)
+    return text
+
+
+def _body_classification(raw):
+    """Classify provider body without logging body contents."""
+    sample = raw[:512].lstrip()
+    if not sample:
+        return "empty"
+    if sample.startswith((b"{", b"[")):
+        try:
+            value = json.loads(raw.decode("utf-8"))
+            return f"json-{type(value).__name__}"
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            return "json-invalid"
+    return "non-json"
+
+
+def _log_response(config, status, content_type, body, shape="unknown"):
+    logger.warning(
+        "AI provider response base_url=%s model=%s status=%s content_type=%s shape=%s body=%s",
+        _safe_base_url(config.get("baseUrl")), _redact(config.get("chatModel", "")),
+        status, _redact(content_type or ""), _redact(shape), _body_classification(body),
+    )
+
+
+def _completion_content(body, config, status, content_type):
+    shape = type(body).__name__
+    if isinstance(body, dict):
+        shape += f" keys={sorted(str(key) for key in body)[:20]}"
+    _log_response(config, status, content_type, json.dumps(body, ensure_ascii=False).encode("utf-8"), shape)
+    choices = body.get("choices") if isinstance(body, dict) else None
+    if not isinstance(choices, list) or not choices:
+        raise AIError("Provider response missing choices.")
+    message = choices[0].get("message") if isinstance(choices[0], dict) else None
+    content = message.get("content") if isinstance(message, dict) else None
+    if isinstance(content, str) and content.strip():
+        return content
+    if isinstance(content, list):
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif isinstance(part, dict) and isinstance(part.get("text"), str):
+                parts.append(part["text"])
+        joined = "".join(parts).strip()
+        if joined:
+            return joined
+    raise AIError("Provider response missing message content.")
 
 from governance import evidence_quote
 
@@ -59,14 +128,23 @@ def call_chat(config, messages, timeout=15):
     )
     try:
         with urlrequest.urlopen(req, timeout=timeout) as response:
-            body = json.loads(response.read().decode("utf-8"))
-        content = body["choices"][0]["message"]["content"]
-        if not isinstance(content, str) or not content.strip():
-            raise AIError("Provider returned empty completion.")
-        return content
+            raw = response.read()
+            status = response.status
+            content_type = response.headers.get("Content-Type", "")
+        try:
+            body = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as error:
+            _log_response(config, status, content_type, raw)
+            raise AIError("Provider response was not valid JSON.") from error
+        return _completion_content(body, config, status, content_type)
+    except urlerror.HTTPError as error:
+        raw = error.read(4096)
+        _log_response(config, error.code, error.headers.get("Content-Type", ""), raw)
+        raise AIError(f"Provider returned HTTP {error.code}.") from error
     except AIError:
         raise
-    except Exception as error:  # network, HTTP, JSON, schema failures all degrade to mock
+    except Exception as error:  # network failures degrade to mock
+        logger.warning("AI provider request failed base_url=%s model=%s error=%s", _safe_base_url(config.get("baseUrl")), _redact(config.get("chatModel", "")), _redact(type(error).__name__))
         raise AIError(f"Provider call failed: {type(error).__name__}") from error
 
 
