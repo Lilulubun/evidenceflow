@@ -49,7 +49,7 @@ def jcall(method, path, payload=None):
 
 def main():
     with tempfile.TemporaryDirectory() as workdir:
-        env = dict(os.environ, EVIDENCEFLOW_PORT=str(PORT), EVIDENCEFLOW_STATE_FILE=str(Path(workdir) / "ui_state.json"))
+        env = dict(os.environ, EVIDENCEFLOW_PORT=str(PORT), EVIDENCEFLOW_STATE_FILE=str(Path(workdir) / "ui_state.json"), EVIDENCEFLOW_AI_SETTINGS_FILE=str(Path(workdir) / "ai_settings.json"))
         server = subprocess.Popen([sys.executable, str(ROOT / "server.py")], env=env,
                                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
@@ -67,7 +67,7 @@ def main():
             check("app.js served", status == 200 and "text/javascript" in ctype)
             check("no secret in app.js", "sk-" not in raw and "EVIDENCEFLOW_AI_API_KEY" not in raw)
             check("API key input masked", '"s-key", body.apiKey || "", "password", "new-password"' in raw)
-            check("chat composer visible after session", "const chatDone = last && ['confirmation_required', 'evidence_created'].includes(last.type);" in raw and '$("#chat-form").hidden=!chatSession || chatDone;' in raw)
+            check("chat composer visible after session", "const chatDone = last && ['evidence_created'].includes(last.type);" in raw and '$("#chat-form").hidden=!chatSession || chatDone;' in raw)
             status, _, ctype = call("GET", "/styles.css")
             check("styles served", status == 200 and "text/css" in ctype)
             for font in ("anton-latin.woff2", "dm-sans-500-latin.woff2"):
@@ -84,9 +84,9 @@ def main():
 
             # Health carries banner state.
             status, health = jcall("GET", "/health")
-            check("health has mode", status == 200 and health["mode"] in {"mock", "real"})
+            check("health has mode", status == 200 and health["mode"] == "unavailable")
             # REF-003: aiState visible pre-config (mock) with no key material.
-            check("health aiState mock", health["aiState"]["state"] in {"mock", "live", "degraded"})
+            check("health aiState unavailable", health["aiState"]["state"] == "unavailable")
             check("aiState carries no key", "apiKey" not in json.dumps(health["aiState"]))
 
             # REF-005: hints endpoint used by the feedback form; advisory, never blocks.
@@ -121,13 +121,17 @@ def main():
                 "situation": "No result case", "action": "Work only", "verifier": "X"}})
             check("clarification surfaced", status == 422 and missing["state"] == "needs_clarification" and missing["missing"] == ["result"])
 
-            # Manager review + cited summary draft (banner mode mock).
+            # Manager review + summary draft fail closed without configured provider.
             _, view = jcall("POST", "/api/review/view", {"employeeId": "emp-004"})
             check("review view for UI", view["raterRoles"] == ["peer", "self"])
+            status, unavailable = jcall("POST", "/api/review/summary-draft", {"employeeId": "emp-004"})
+            check("summary unavailable", status == 503 and unavailable["error"]["code"] == "AI_UNAVAILABLE")
+            check("summary carries aiState", unavailable["aiState"]["state"] == "unavailable")
+            # Explicit fixture mode remains opt-in test/demo path.
+            status, fixture = jcall("POST", "/api/settings", {"fixtureMode": True})
+            check("fixture setting saved", status == 200)
             status, summary = jcall("POST", "/api/review/summary-draft", {"employeeId": "emp-004"})
-            check("summary for UI", status == 200 and summary["mode"] == "mock" and all(c.get("evidenceId") and c.get("quote") for c in summary["claims"]))
-            # REF-003: summary-draft carries aiState so the UI banner/notice can show it.
-            check("summary carries aiState", summary["aiState"]["state"] in {"mock", "live", "degraded"})
+            check("explicit fixture summary", status == 200 and summary["mode"] == "mock" and all(c.get("evidenceId") and c.get("quote") for c in summary["claims"]))
             status, rating = jcall("POST", "/api/review/rating", {"actor": MANAGER, "employeeId": "emp-004",
                 "summary": summary["claims"], "rationale": "UI smoke rationale", "rating": "meets"})
             check("rating recorded", status == 201 and rating["state"] == "recorded")
@@ -157,19 +161,19 @@ def main():
             _, seen = jcall("GET", "/api/settings")
             check("masked key in UI path", saved["settings"]["apiKey"] == "********" and seen["apiKey"] == "********")
             check("no key echo anywhere", "sk-ui-secret" not in json.dumps([health, view, summary, audit, seen]))
-            # Cleanup stored test config so later runs stay mock.
-            jcall("POST", "/api/settings", {"enabled": False, "apiKey": "", "chatModel": "", "baseUrl": ""})
+            # Cleanup stored test config so later runs stay unavailable.
+            jcall("POST", "/api/settings", {"enabled": False, "fixtureMode": False, "apiKey": "", "chatModel": "", "baseUrl": ""})
 
-            # REF-003 end-to-end: configured-but-failing provider must surface degraded, never silent live.
+            # REF-003 end-to-end: configured-but-failing provider fails closed.
             jcall("POST", "/api/settings", {"enabled": True, "apiKey": "sk-degraded-test", "baseUrl": "http://127.0.0.1:9/v1", "chatModel": "down-model"})
             _, summary_dg = jcall("POST", "/api/review/summary-draft", {"employeeId": "emp-004"})
             _, health_dg = jcall("GET", "/health")
-            check("degraded after provider failure", summary_dg["mode"] == "mock" and health_dg["aiState"]["state"] == "degraded")
+            check("degraded after provider failure", summary_dg["error"]["code"] == "AI_UNAVAILABLE" and health_dg["aiState"]["state"] == "unavailable")
             check("degraded detail present", bool(health_dg["aiState"]["detail"]))
             check("no key in degraded state", "sk-degraded-test" not in json.dumps([summary_dg, health_dg]))
             jcall("POST", "/api/settings", {"enabled": False, "apiKey": "", "chatModel": "", "baseUrl": ""})
             _, health_after = jcall("GET", "/health")
-            check("back to mock after disable", health_after["aiState"]["state"] == "mock")
+            check("back to unavailable after disable", health_after["aiState"]["state"] in {"unavailable", "mock"})
 
             if failures:
                 print(f"UI smoke FAILED: {failures}")

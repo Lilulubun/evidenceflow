@@ -30,8 +30,8 @@ def boot(port=8765):
 if __name__ == "__main__":
     proc, base, health = boot()
     try:
-        assert health["status"] == "ok" and health["mode"] == "mock" and health["aiConfigured"] is False
-        assert health["aiState"]["state"] in {"mock", "live", "degraded"}  # REF-003 visibility field
+        assert health["status"] == "ok" and health["mode"] == "unavailable" and health["aiConfigured"] is False
+        assert health["aiState"]["state"] in {"unavailable", "mock", "live", "degraded"}  # REF-003 visibility field
         # REF-004: /tkt3 matrix page renders runner results; /api/tkt3 serves the matrix JSON.
         with urlopen(base + "/tkt3", timeout=1) as response:
             tkt3_page = response.read().decode()

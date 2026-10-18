@@ -154,16 +154,46 @@ from governance import evidence_quote
 
 
 class AIError(Exception):
-    """Raised when the configured provider cannot be reached or answers invalid JSON."""
-
+    """Base typed provider error."""
     def __init__(self, reason):
         super().__init__(reason)
         self.reason = reason
 
 
+class AIUnavailableError(AIError):
+    pass
+
+
+class StructuredExtractionError(AIError):
+    pass
+
+
+def extract_conversation(config, kind, text):
+    """Extract schema fields only when provider returns exact source anchors."""
+    if not ai_config(config):
+        raise AIUnavailableError("AI provider is not configured.")
+    prompt = {"role": "user", "content": "Extract JSON fields for " + kind + ". Every field must include exact source text. Source: " + text}
+    try:
+        content = call_chat(config, [prompt])
+        parsed = json.loads(re.search(r"\\{.*\\}", content, re.DOTALL).group(0))
+        fields = parsed.get("fields")
+        if not isinstance(fields, list):
+            raise ValueError
+        result = {}
+        for field in fields:
+            if not isinstance(field, dict) or not isinstance(field.get("name"), str) or not isinstance(field.get("value"), str) or not isinstance(field.get("source"), str) or field["source"] not in text:
+                raise ValueError
+            result[field["name"]] = field["value"]
+        return result
+    except AIError:
+        raise
+    except (AttributeError, json.JSONDecodeError, TypeError, ValueError) as error:
+        raise StructuredExtractionError("Provider output failed schema/source-anchor validation.") from error
+
+
 # REF-003: last AI call outcome surfaced via /health; degraded means configured
 # provider failed and mock output was served instead. Single-process demo scope.
-_LAST = {"state": "mock", "detail": ""}
+_LAST = {"state": "unavailable", "detail": "AI provider is not configured."}
 
 
 def last_state():
@@ -299,6 +329,12 @@ def parse_real_summary(content, evidence_rows):
 def draft_summary(config, evidence_rows):
     """Real provider when configured; deterministic mock otherwise or on failure."""
     global _LAST
+    if config.get("fixtureMode"):
+        _LAST = {"state": "mock", "detail": "explicit fixture mode"}
+        return mock_summary(evidence_rows), "mock"
+    if not ai_config(config):
+        _LAST = {"state": "unavailable", "detail": "AI provider is not configured."}
+        raise AIUnavailableError("AI provider is not configured.")
     if ai_config(config):
         catalog = [{"evidenceId": row["id"], "quote": evidence_quote(row), "raterRole": row["data"].get("rater_role")} for row in evidence_rows]
         instruction = (
@@ -312,11 +348,10 @@ def draft_summary(config, evidence_rows):
             _LAST = {"state": "live", "detail": ""}
             return parse_real_summary(content, evidence_rows), "real"
         except AIError as error:
-            # REF-003: never pass degraded output off as live; remember why for /health.
-            _LAST = {"state": "degraded", "detail": error.reason}
-    else:
-        _LAST = {"state": "mock", "detail": ""}
-    return mock_summary(evidence_rows), "mock"
+            # REF-003: fail closed; configured provider failure never serves mock output.
+            _LAST = {"state": "unavailable", "detail": error.reason}
+            raise AIUnavailableError(error.reason) from error
+    raise AIUnavailableError("AI provider is not configured.")
 
 
 def test_connection(config):

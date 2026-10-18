@@ -5,7 +5,7 @@ from pathlib import Path
 
 MASK = "********"
 SECRET_KEYS = {"apiKey"}
-ALLOWED_KEYS = {"enabled", "provider", "baseUrl", "chatModel", "embeddingModel", "apiKey", "temperature", "tokenLimit"}
+ALLOWED_KEYS = {"enabled", "provider", "baseUrl", "chatModel", "embeddingModel", "apiKey", "temperature", "tokenLimit", "reasoningEffort", "fixtureMode"}
 
 
 def settings_path():
@@ -58,6 +58,9 @@ def effective_config(env):
         "baseUrl": stored.get("baseUrl") or env["baseUrl"],
         "chatModel": stored.get("chatModel") or env["chatModel"],
         "apiKey": stored.get("apiKey") or env["apiKey"],
+        "provider": stored.get("provider", env.get("provider", "openai-compatible")),
+        "reasoningEffort": stored.get("reasoningEffort", env.get("reasoningEffort", "medium")),
+        "fixtureMode": bool(stored.get("fixtureMode", env.get("fixtureMode", False))),
         "temperature": float(stored.get("temperature", env["temperature"])),
         "tokenLimit": int(stored.get("tokenLimit", env["tokenLimit"])),
     }

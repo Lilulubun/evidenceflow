@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from ai_adapter import discover_models, draft_summary as ai_draft_summary
+from ai_adapter import AIError, discover_models, draft_summary as ai_draft_summary
 from ai_adapter import feedback_hints, last_state, test_connection
 from app_core import Store
 from chat import create_session, get_session, message as chat_message, confirm as chat_confirm, SYSTEM_PROMPT
@@ -32,7 +32,7 @@ def settings():
     load_env()
     enabled = os.getenv("EVIDENCEFLOW_AI_ENABLED", "false").lower() == "true"
     has_key = bool(os.getenv("EVIDENCEFLOW_AI_API_KEY"))
-    return {"mode": "real" if enabled and has_key else "mock", "aiConfigured": enabled and has_key, "provider": os.getenv("EVIDENCEFLOW_AI_PROVIDER", "openai-compatible")}
+    return {"mode": "real" if enabled and has_key else "unavailable", "aiConfigured": enabled and has_key, "provider": os.getenv("EVIDENCEFLOW_AI_PROVIDER", "openai-compatible")}
 
 
 def read_ai_config():
@@ -45,6 +45,7 @@ def read_ai_config():
         "apiKey": os.getenv("EVIDENCEFLOW_AI_API_KEY", ""),
         "temperature": float(os.getenv("EVIDENCEFLOW_AI_TEMPERATURE", "0")),
         "tokenLimit": int(os.getenv("EVIDENCEFLOW_AI_TOKEN_LIMIT", "1024")),
+        "fixtureMode": False,
     }
     return effective_config(env_defaults)
 
@@ -257,7 +258,11 @@ periods {esc(", ".join(data.get("fixture", {}).get("periods", [])))}. Synthetic 
                 return
             view = review_view(store(), body["employeeId"])
             evidence_rows = [row for row in store().snapshot()["evidence"] if row["data"].get("employee_id") == body["employeeId"]]
-            claims, mode = ai_draft_summary(read_ai_config(), evidence_rows)
+            try:
+                claims, mode = ai_draft_summary(read_ai_config(), evidence_rows)
+            except AIError as error:
+                self.send_json(503, {"error": {"code": "AI_UNAVAILABLE", "message": error.reason}, "aiState": last_state()})
+                return
             self.send_json(200, {"claims": claims, "mode": mode, "aiState": last_state(), "notice": "AI-assisted draft; manager must edit and own the rating."})
             return
         if path == "/api/settings":

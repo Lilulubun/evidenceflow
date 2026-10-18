@@ -6,7 +6,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib import request as urlrequest
 
-from ai_adapter import AIError, ai_config, call_chat, discover_models, draft_summary, mock_summary, parse_real_summary, test_connection
+from ai_adapter import AIError, AIUnavailableError, ai_config, call_chat, discover_models, draft_summary, mock_summary, parse_real_summary, test_connection
 from app_core import Store
 
 employee = {"id": "emp-004", "role": "employee"}
@@ -16,10 +16,15 @@ with tempfile.TemporaryDirectory() as directory:
     original = storage.confirm_draft(original_draft["draftId"], employee)["evidence"]
     rows = [row for row in storage.snapshot()["evidence"] if row["data"].get("employee_id") == "emp-004"]
 
-    # Mock default without credentials.
+    # Unconfigured provider fails closed; explicit fixture mode owns mock path.
     assert ai_config({}) is False
     assert discover_models({})["reason"] == "AI provider is not configured."
-    claims, mode = draft_summary({}, rows)
+    try:
+        draft_summary({}, rows)
+        raise AssertionError("unconfigured provider served mock output")
+    except AIUnavailableError:
+        pass
+    claims, mode = draft_summary({"fixtureMode": True}, rows)
     assert mode == "mock" and claims == mock_summary(rows)
 
     # Real-shaped valid output passes identical gate.
@@ -78,8 +83,11 @@ with tempfile.TemporaryDirectory() as directory:
     server = ThreadingHTTPServer(("127.0.0.1", 0), FakeHandler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
     failing_config = {"enabled": True, "apiKey": "secret", "baseUrl": f"http://127.0.0.1:{server.server_port}", "chatModel": "test-model", "temperature": 0, "tokenLimit": 64}
-    degraded, degraded_mode = draft_summary(failing_config, rows)
-    assert degraded_mode == "mock" and degraded == mock_summary(rows)
+    try:
+        draft_summary(failing_config, rows)
+        raise AssertionError("provider failure served mock output")
+    except AIUnavailableError:
+        pass
     connection = test_connection(failing_config)
     assert connection["ok"] is False and "secret" not in json.dumps(connection)
     server.shutdown()
@@ -87,7 +95,7 @@ with tempfile.TemporaryDirectory() as directory:
     # REF-003: degraded state recorded and visible; detail never contains the key.
     from ai_adapter import last_state
     state = last_state()
-    assert state["state"] == "degraded" and state["detail"] and "secret" not in state["detail"]
+    assert state["state"] in {"unavailable", "degraded"} and state["detail"] and "secret" not in state["detail"]
     # Successful real-shaped provider call records live state.
     class OkHandler(BaseHTTPRequestHandler):
         def do_POST(self):
