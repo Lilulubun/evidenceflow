@@ -1,4 +1,4 @@
-/* EVIDENCEFLOW demo UI. Vanilla JS, no build, no dependencies, no secret storage. */
+/* KerjaKita AI demo UI. Vanilla JS, no build, no dependencies, no secret storage. */
 "use strict";
 
 const $ = (sel) => document.querySelector(sel);

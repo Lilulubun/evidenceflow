@@ -5,7 +5,7 @@
     </marker>
   </defs>
   <rect width="960" height="560" fill="#f7f8fa"/>
-  <text x="480" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#1c2333">EVIDENCEFLOW architecture — controlled TKT 3 proof (stdlib only)</text>
+  <text x="480" y="30" text-anchor="middle" font-size="19" font-weight="bold" fill="#1c2333">KerjaKita AI architecture — controlled TKT 3 proof (stdlib only)</text>
 
   <!-- Browser -->
   <rect x="40" y="60" width="200" height="110" rx="10" fill="#e8f0fe" stroke="#4a6fa5"/>

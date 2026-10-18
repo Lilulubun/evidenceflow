@@ -1,4 +1,4 @@
-"""Stdlib-only EVIDENCEFLOW controlled-scenario server."""
+"""Stdlib-only KerjaKita AI controlled-scenario server."""
 import json
 import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -172,11 +172,11 @@ class Handler(BaseHTTPRequestHandler):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EVIDENCEFLOW TKT3 results</title>
+<title>KerjaKita AI TKT3 results</title>
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<header><a class="brand" href="/">EVIDENCEFLOW</a><nav aria-label="Pages"><a href="/">Workspace</a><a href="/graph?employee=emp-004">Employee graph</a></nav><span class="banner mock">Controlled synthetic scenario</span></header>
+<header><a class="brand" href="/">KerjaKita AI</a><nav aria-label="Pages"><a href="/">Workspace</a><a href="/graph?employee=emp-004">Employee graph</a></nav><span class="banner mock">Controlled synthetic scenario</span></header>
 <main>
 <div class="page-intro"><div><h1>TKT 3 validation</h1><p>Critical functions, recorded outcomes.</p></div><div class="signature" aria-hidden="true"></div></div>
 <p class="muted">Run {esc(data.get("runStartedAt", "?"))} → {esc(data.get("runFinishedAt", "?"))}.
@@ -343,5 +343,5 @@ periods {esc(", ".join(data.get("fixture", {}).get("periods", [])))}. Synthetic 
 if __name__ == "__main__":
     host = os.getenv("EVIDENCEFLOW_HOST", "127.0.0.1")
     port = int(os.getenv("EVIDENCEFLOW_PORT", "8000"))
-    print(f"EVIDENCEFLOW listening on http://{host}:{port}")
+    print(f"KerjaKita AI listening on http://{host}:{port}")
     ThreadingHTTPServer((host, port), Handler).serve_forever()

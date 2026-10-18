@@ -42,7 +42,7 @@ if __name__ == "__main__":
         assert matrix["totals"]["passed"] == 12 and len(matrix["results"]) == 12
         with urlopen(base + "/", timeout=1) as response:
             page = response.read().decode()
-        assert "EVIDENCEFLOW" in page and "app.js" in page
+        assert "KerjaKita AI" in page and "app.js" in page
         # Quick-reply labels render client-side from app.js (REF-001), so assert there.
         app_js = (ROOT / "static" / "app.js").read_text(encoding="utf-8")
         assert "Add contribution" in app_js and "Confirm" in app_js

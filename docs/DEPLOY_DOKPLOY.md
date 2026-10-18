@@ -1,11 +1,11 @@
 # Dokploy Application deployment
 
-Deploy EVIDENCEFLOW as one Dokploy **Application** using its root Dockerfile. No Compose deployment is required or supported by this guide.
+Deploy KerjaKita AI as one Dokploy **Application** using its root Dockerfile. No Compose deployment is required or supported by this guide.
 
 ## Create application
 
 1. Dokploy → **Create Application** → GitHub provider.
-2. Repository: `Lilulubun/evidenceflow`; branch: `main`.
+2. Repository: `Lilulubun/kerjakita-ai`; branch: `main`.
 3. Build Type: **Dockerfile**.
 4. Dockerfile Path: `./Dockerfile`.
 5. Docker Context Path: `.`.
@@ -28,7 +28,7 @@ EVIDENCEFLOW_STATE_FILE=/data/runtime_state.json
 EVIDENCEFLOW_AI_SETTINGS_FILE=/data/runtime_ai_settings.json
 ```
 
-Keep AI disabled until access restriction is active. Configure API keys only in Dokploy runtime Environment Variables or EVIDENCEFLOW settings UI after gate verification; never commit secrets or pass keys as build arguments. Optional runtime names: `EVIDENCEFLOW_AI_ENABLED`, `EVIDENCEFLOW_AI_API_KEY`, `EVIDENCEFLOW_AI_BASE_URL`, `EVIDENCEFLOW_AI_CHAT_MODEL`, `EVIDENCEFLOW_AI_TEMPERATURE`, `EVIDENCEFLOW_AI_TOKEN_LIMIT`, `EVIDENCEFLOW_AI_PROVIDER`. Stored settings override environment defaults. Saved key remains plaintext server-side in `/data/runtime_ai_settings.json` (mode `0600`); secure volume backups too. `GET /api/settings` masks saved key. Health `mode` derives from environment, while `aiState.state` reflects last provider call: configuring credentials alone does not prove live AI.
+Keep AI disabled until access restriction is active. Configure API keys only in Dokploy runtime Environment Variables or KerjaKita AI settings UI after gate verification; never commit secrets or pass keys as build arguments. Optional runtime names: `EVIDENCEFLOW_AI_ENABLED`, `EVIDENCEFLOW_AI_API_KEY`, `EVIDENCEFLOW_AI_BASE_URL`, `EVIDENCEFLOW_AI_CHAT_MODEL`, `EVIDENCEFLOW_AI_TEMPERATURE`, `EVIDENCEFLOW_AI_TOKEN_LIMIT`, `EVIDENCEFLOW_AI_PROVIDER`. Stored settings override environment defaults. Saved key remains plaintext server-side in `/data/runtime_ai_settings.json` (mode `0600`); secure volume backups too. `GET /api/settings` masks saved key. Health `mode` derives from environment, while `aiState.state` reflects last provider call: configuring credentials alone does not prove live AI.
 
 ## HTTPS and access gate
 

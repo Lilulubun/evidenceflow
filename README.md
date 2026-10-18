@@ -1,4 +1,4 @@
-# EVIDENCEFLOW TKT 3 PoC
+# KerjaKita AI — TKT 3 PoC
 
 Controlled synthetic proof-of-concept for evidence-grounded 360° performance appraisal. Manager decides. AI assists source-linked structure and summaries only. Not production-ready. No fairness or organizational-validity claim.
 
@@ -83,7 +83,7 @@ Do not put secrets in source, fixtures, test output, or browser storage. Origina
 
 Product decisions, research, TKT 3 evidence, and demo materials live in the separate documentation repository:
 
-https://github.com/Lilulubun/evidenceflow-docs
+https://github.com/Lilulubun/kerjakita-ai-docs
 
 The deployment guide remains in this repository at `docs/DEPLOY_DOKPLOY.md` because it belongs to the executable code release.
 
